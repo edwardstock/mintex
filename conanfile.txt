@@ -1,0 +1,14 @@
+[generators]
+cmake
+
+[requires]
+toolboxpp/2.0.0@scatter/latest
+httb/0.2.0@scatter/latest
+
+boost_program_options/1.69.0@bincrafters/stable
+boost_log/1.69.0@bincrafters/stable
+boost_multiprecision/1.69.0@bincrafters/stable
+boost_exception/1.69.0@bincrafters/stable
+
+#test
+gtest/1.8.1@bincrafters/stable

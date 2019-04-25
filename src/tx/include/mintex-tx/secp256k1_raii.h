@@ -1,0 +1,45 @@
+/*!
+ * mintex.
+ * secp256k1_raii.h
+ *
+ * \date 2019
+ * \author Eduard Maximovich (edward.vstock@gmail.com)
+ * \link   https://github.com/edwardstock
+ */
+
+#ifndef MINTEX_SECP256K1_RAII_H
+#define MINTEX_SECP256K1_RAII_H
+
+#include <memory>
+#include <secp256k1/include/secp256k1.h>
+#include <secp256k1/include/secp256k1_ecdh.h>
+#include <secp256k1/include/secp256k1_recovery.h>
+
+namespace mintex {
+
+class secp256k1_raii {
+public:
+    struct secp256k1_deleter {
+      void operator()(secp256k1_context *ctx) {
+          secp256k1_context_destroy(ctx);
+      }
+    };
+    using ptr_t = std::unique_ptr<secp256k1_context, secp256k1_deleter>;
+
+    secp256k1_raii(uint32_t flags) {
+        auto *ctx = secp256k1_context_create(flags);
+        m_ctx = ptr_t(ctx);
+    }
+
+    virtual ~secp256k1_raii() = default;
+
+    const secp256k1_context * get() const {
+        return m_ctx.get();
+    }
+private:
+    ptr_t m_ctx;
+};
+
+}
+
+#endif //MINTEX_SECP256K1_RAII_H
