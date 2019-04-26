@@ -29,10 +29,10 @@ dev::bytes mintex::utils::to_bytes(const std::string &input) {
         return dev::bytes(0);
     }
 
-    std::vector<byte> output;
+    dev::bytes output;
     output.resize(input.length());
     for (auto i = 0; i < input.size(); i++) {
-        output[i] = (byte) input[i];
+        output[i] = (uint8_t) input[i];
     }
 
     return output;
@@ -41,12 +41,14 @@ dev::bytes mintex::utils::to_bytes(const std::string &input) {
 dev::bytes mintex::utils::to_bytes_fixed(const std::string &input, size_t fixed_size) {
     dev::bytes output;
     output.resize(fixed_size);
-    for (auto i = 0; i < input.size() && i < fixed_size; i++, fixed_size--) {
-        output[i] = (byte) input[i];
+    size_t left = fixed_size;
+    size_t fill_from = 0;
+    for (auto i = 0; i < input.size() && i < fixed_size; i++, left--, fill_from++) {
+        output[i] = (uint8_t) input[i];
     }
 
-    for (auto i = input.size(); i < fixed_size; i++) {
-        output[i] = (byte) 0x00;
+    for (auto i = fill_from; i < fixed_size; i++) {
+        output[i] = (uint8_t) 0x00;
     }
 
     return output;

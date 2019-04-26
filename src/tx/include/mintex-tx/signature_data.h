@@ -20,6 +20,7 @@ namespace mintex {
 class signature_data {
 public:
     virtual dev::bytes encode() = 0;
+    virtual void decode(const dev::RLP &data) = 0;
     virtual ~signature_data() = default;
 };
 
@@ -36,14 +37,17 @@ public:
     const dev::bytes & get_s() const;
 
     dev::bytes encode() override;
+    void decode(const dev::RLP &data) override;
 private:
     dev::bytes m_v, m_r, m_s;
 };
 
 class signature_multi_data: public virtual mintex::signature_data {
 public:
-    dev::bytes encode() override;
     signature_multi_data &set_signatures(const mintex::data::minter_address &address, std::vector<mintex::signature_single_data> &&signs);
+    dev::bytes encode() override;
+    void decode(const dev::RLP &data) override;
+
 private:
     mintex::data::minter_address m_address;
     std::vector<mintex::signature_single_data> m_signs;

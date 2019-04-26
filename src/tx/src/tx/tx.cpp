@@ -47,9 +47,8 @@ std::shared_ptr<mintex::tx> mintex::tx::create() {
     return std::make_shared<mintex::tx>();
 }
 
-std::shared_ptr<mintex::tx> mintex::tx::decode(const char *hexEncoded) {
-    minter::Data gvn(hexEncoded);
-    dev::RLP s(gvn.cget());
+std::shared_ptr<mintex::tx> mintex::tx::decode(const dev::bytes &tx) {
+    dev::RLP s(tx);
 
     if (s.itemCount() != 10) {
         throw std::runtime_error("Invalid RLP length: required 10 elements");
@@ -70,15 +69,19 @@ std::shared_ptr<mintex::tx> mintex::tx::decode(const char *hexEncoded) {
     out->m_service_data = (dev::bytes)s[7];
     out->m_signature_type = (dev::bigint) s[8];
 
-
-    /*
-     dev::bytes m_payload;
-    dev::bytes m_service_data;
-    dev::bigint m_signature_type;
-    std::shared_ptr<mintex::signature_data> m_signature;
-     */
+    if(out->m_signature_type == mintex::signature_type::single) {
+        out->m_signature = std::make_shared<mintex::signature_single_data>();
+        out->m_signature->decode(s[9]);
+    } else if(out->m_signature_type == mintex::signature_type::multi) {
+        out->m_signature = std::make_shared<mintex::signature_multi_data>();
+        out->m_signature->decode(s[9]);
+    }
 
     return out;
+}
+
+std::shared_ptr<mintex::tx> mintex::tx::decode(const char *hexEncoded) {
+    return decode(minter::Data(hexEncoded).cget());
 }
 
 /// \todo make static map, remove switch-case
@@ -132,7 +135,7 @@ void mintex::tx::create_data_from_type() {
 }
 
 minter::Data mintex::tx::sign_single(const mintex::minter_private_key &pk) {
-    m_signature_type = 0x01;
+    m_signature_type = mintex::signature_type::single;
 
     minter::Data raw_tx_data = minter::Data(encode(true));
     minter::Data32 hash(mintex::utils::sha3k(raw_tx_data));
@@ -211,7 +214,7 @@ dev::bytes mintex::tx::encode(bool include_signature) {
 }
 
 minter::Data mintex::tx::sign_multiple(const mintex::data::minter_address &address, const mintex::minter_private_key &pk) {
-    m_signature_type = 0x02;
+    m_signature_type = mintex::signature_type::multi;
     return minter::Data("0x0");
 }
 

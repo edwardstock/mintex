@@ -10,7 +10,6 @@
 #include <algorithm>
 #include "mintex-tx/signature_data.h"
 #include "mintex-tx/utils.h"
-#include <iostream>
 
 dev::bytes mintex::signature_single_data::encode() {
     dev::RLPStream txData;
@@ -88,6 +87,12 @@ const dev::bytes &mintex::signature_single_data::get_s() const {
     return m_s;
 }
 
+void mintex::signature_single_data::decode(const dev::RLP &data) {
+    m_v = (dev::bytes)data[0];
+    m_r = (dev::bytes)data[1];
+    m_s = (dev::bytes)data[2];
+}
+
 
 dev::bytes mintex::signature_multi_data::encode() {
     dev::RLPStream signList;
@@ -113,4 +118,9 @@ mintex::signature_multi_data &mintex::signature_multi_data::set_signatures(const
     m_signs = std::move(signs);
 
     return *this;
+}
+
+void mintex::signature_multi_data::decode(const dev::RLP &data) {
+    dev::RLPStream out;
+//    m_address = (dev::b)
 }

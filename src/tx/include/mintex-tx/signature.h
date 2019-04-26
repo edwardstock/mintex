@@ -14,8 +14,13 @@
 
 namespace mintex {
 
+typedef enum {
+  single = (uint8_t) 0x01,
+  multi = (uint8_t) 0x02
+} signature_type;
+
 typedef struct {
-  dev::bytes r,s,v;
+  dev::bytes r, s, v;
   bool success = false;
 } signature;
 

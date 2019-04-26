@@ -41,6 +41,7 @@ class tx : public std::enable_shared_from_this<mintex::tx> {
 public:
     static std::shared_ptr<mintex::tx> create();
     static std::shared_ptr<mintex::tx> decode(const char *encodedHex);
+    static std::shared_ptr<mintex::tx> decode(const dev::bytes &tx);
     /// \brief DON'T use it directly, otherwise bad_weak_ptr exception will threw
     tx();
     virtual ~tx() = default;

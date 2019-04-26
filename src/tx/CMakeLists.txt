@@ -55,7 +55,8 @@ set(SOURCES
     src/tx/tx_builder.cpp)
 
 add_library(${PROJECT_NAME} ${SOURCES})
-target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -std=c++14 -fPIC) #-static-libstdc++
+
+target_compile_options(${PROJECT_NAME} PUBLIC -Wno-shift-count-overflow -std=c++14 -fPIC ) #-static-libstdc++
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 #uint256
@@ -101,8 +102,8 @@ if (WITH_TEST)
 
 	set(TEST_SOURCES
 	    tests/tx_send_test.cpp
-		tests/tx_buy_coin_test.cpp
-			)
+	    tests/tx_buy_coin_test.cpp
+	    tests/tx_create_coin_test.cpp tests/utils_test.cpp tests/tx_sell_coin_test.cpp tests/tx_delegate_test.cpp)
 
 	add_executable(${PROJECT_NAME_TEST} ${TEST_SOURCES})
 	target_compile_options(${PROJECT_NAME_TEST} PUBLIC -Wno-unused-parameter)

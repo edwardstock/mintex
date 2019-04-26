@@ -10,6 +10,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(RP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(RP_BD ${CMAKE_BINARY_DIR})
 
+set(CMAKE_CXX_FLAGS_DEBUG -gdwarf-3)
+
 execute_process(
 	COMMAND bash -c "echo ${CMAKE_PROJECT_VERSION} > ${CMAKE_CURRENT_SOURCE_DIR}/version"
 )
