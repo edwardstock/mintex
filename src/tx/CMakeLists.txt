@@ -17,7 +17,7 @@ set(HEADERS
     include/mintex-tx/tx_create_coin.h
     include/mintex-tx/tx_declare_candidacy.h
     include/mintex-tx/tx_delegate.h
-    include/mintex-tx/tx_unbound.h
+        include/mintex-tx/tx_unbond.h
     include/mintex-tx/tx_redeem_check.h
     include/mintex-tx/tx_set_candidate_on_off.h
     include/mintex-tx/tx_create_multisig_address.h
@@ -42,7 +42,7 @@ set(SOURCES
     src/tx/tx_create_coin.cpp
     src/tx/tx_declare_candidacy.cpp
     src/tx/tx_delegate.cpp
-    src/tx/tx_unbound.cpp
+    src/tx/tx_unbond.cpp
     src/tx/tx_redeem_check.cpp
     src/tx/tx_set_candidate_on_off.cpp
     src/tx/tx_create_multisig_address.cpp
@@ -101,7 +101,8 @@ if (WITH_TEST)
 
 	set(TEST_SOURCES
 	    tests/tx_send_test.cpp
-	    )
+		tests/tx_buy_coin_test.cpp
+			)
 
 	add_executable(${PROJECT_NAME_TEST} ${TEST_SOURCES})
 	target_compile_options(${PROJECT_NAME_TEST} PUBLIC -Wno-unused-parameter)

@@ -23,6 +23,7 @@ public:
     minter_address() = default;
     minter_address(const char *hexString);
     minter_address(const std::vector<uint8_t> &data);
+    minter_address(std::vector<uint8_t> &&data);
     const std::string toString();
     const std::string toStringWithoutPrefix();
 

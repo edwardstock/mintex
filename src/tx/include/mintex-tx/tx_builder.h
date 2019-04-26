@@ -16,6 +16,20 @@
 #include "mintex-tx/tx_fwd.h"
 #include "mintex-tx/tx.h"
 
+#include "mintex-tx/tx_send_coin.h"
+#include "mintex-tx/tx_sell_coin.h"
+#include "mintex-tx/tx_sell_all_coins.h"
+#include "mintex-tx/tx_buy_coin.h"
+#include "mintex-tx/tx_create_coin.h"
+#include "mintex-tx/tx_declare_candidacy.h"
+#include "mintex-tx/tx_delegate.h"
+#include "mintex-tx/tx_unbond.h"
+#include "mintex-tx/tx_redeem_check.h"
+#include "mintex-tx/tx_set_candidate_on_off.h"
+#include "mintex-tx/tx_create_multisig_address.h"
+#include "mintex-tx/tx_multisend.h"
+#include "mintex-tx/tx_edit_candidate.h"
+
 namespace mintex {
 
 class tx_builder {
@@ -49,7 +63,7 @@ public:
     std::shared_ptr<mintex::tx_create_coin> tx_create_coin();
     std::shared_ptr<mintex::tx_declare_candidacy> tx_declare_candidacy();
     std::shared_ptr<mintex::tx_delegate> tx_delegate();
-    std::shared_ptr<mintex::tx_unbound> tx_unbound();
+    std::shared_ptr<mintex::tx_unbond> tx_unbound();
     std::shared_ptr<mintex::tx_redeem_check> tx_redeem_check();
     std::shared_ptr<mintex::tx_set_candidate_on> tx_set_candidate_on();
     std::shared_ptr<mintex::tx_set_candidate_off> tx_set_candidate_off();

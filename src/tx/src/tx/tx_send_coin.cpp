@@ -7,6 +7,7 @@
  * \link   https://github.com/edwardstock
  */
 
+#include <bip39/src/minter/utils.h>
 #include "mintex-tx/utils.h"
 #include "mintex-tx/tx_send_coin.h"
 #include "mintex-tx/tx_type.h"

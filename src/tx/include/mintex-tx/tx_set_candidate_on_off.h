@@ -20,8 +20,13 @@ public:
 
     dev::bytes encode() override;
 
+    void set_pub_key(const dev::bytes &pub_key);
+    const dev::bytes& get_pub_key();
+
 protected:
     void decode_internal(dev::RLP rlp) override;
+    dev::bytes m_pub_key;
+
 };
 
 class tx_set_candidate_on: public mintex::tx_set_candidate_on_off {

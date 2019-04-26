@@ -13,13 +13,26 @@
 #include "tx_data.h"
 namespace mintex {
 
+static const uint32_t PROOF_LEN = 65;
+
 class tx_redeem_check: public virtual mintex::tx_data {
 public:
     explicit tx_redeem_check(std::shared_ptr<mintex::tx> tx);
     uint16_t type() const override;
     dev::bytes encode() override;
+
+    tx_redeem_check& set_check(const dev::bytes &data);
+    tx_redeem_check& set_proof(const dev::bytes &data);
+
+    const dev::bytes get_check() const;
+    const dev::bytes get_proof() const;
+
 protected:
     void decode_internal(dev::RLP rlp) override;
+
+private:
+    dev::bytes m_check;
+    dev::bytes m_proof;
 };
 
 }

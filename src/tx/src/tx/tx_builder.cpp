@@ -17,7 +17,7 @@
 #include "mintex-tx/tx_create_coin.h"
 #include "mintex-tx/tx_declare_candidacy.h"
 #include "mintex-tx/tx_delegate.h"
-#include "mintex-tx/tx_unbound.h"
+#include "mintex-tx/tx_unbond.h"
 #include "mintex-tx/tx_redeem_check.h"
 #include "mintex-tx/tx_set_candidate_on_off.h"
 #include "mintex-tx/tx_create_multisig_address.h"
@@ -150,8 +150,8 @@ std::shared_ptr<mintex::tx_delegate> mintex::tx_builder::tx_delegate() {
     return std::make_shared<mintex::tx_delegate>(m_tx);
 }
 
-std::shared_ptr<mintex::tx_unbound> mintex::tx_builder::tx_unbound() {
-    return std::make_shared<mintex::tx_unbound>(m_tx);
+std::shared_ptr<mintex::tx_unbond> mintex::tx_builder::tx_unbound() {
+    return std::make_shared<mintex::tx_unbond>(m_tx);
 }
 
 std::shared_ptr<mintex::tx_redeem_check> mintex::tx_builder::tx_redeem_check() {

@@ -20,7 +20,7 @@ class tx_buy_coin;
 class tx_create_coin;
 class tx_declare_candidacy;
 class tx_delegate;
-class tx_unbound;
+class tx_unbond;
 class tx_redeem_check;
 class tx_set_candidate_on;
 class tx_set_candidate_off;

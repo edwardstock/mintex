@@ -38,7 +38,7 @@ template<> struct tx_type<mintex::_T> { \
 using _T##_type = tx_type<mintex::_T>
 
 #define define_tx_type_funcs(_T) \
-    std::shared_ptr<mintex::_T> mintex::tx_type<mintex::_T>::create(std::shared_ptr<mintex::tx> ptr, const std::vector<uint8_t>& encodedData) { \
+    std::shared_ptr<mintex::_T> mintex::tx_type<mintex::_T>::create(std::shared_ptr<mintex::tx> ptr, const std::vector<uint8_t> &encodedData) { \
         auto data = std::make_shared<mintex::_T>(ptr); \
         data->decode(encodedData); \
         return data; \
@@ -51,7 +51,7 @@ create_tx_type(tx_buy_coin, 0x04, 100);
 create_tx_type(tx_create_coin, 0x05, 1000);
 create_tx_type(tx_declare_candidacy, 0x06, 10000);
 create_tx_type(tx_delegate, 0x07, 200);
-create_tx_type(tx_unbound, 0x08, 200);
+create_tx_type(tx_unbond, 0x08, 200);
 create_tx_type(tx_redeem_check, 0x09, 30);
 create_tx_type(tx_set_candidate_on, 0x0A, 100);
 create_tx_type(tx_set_candidate_off, 0x0B, 100);

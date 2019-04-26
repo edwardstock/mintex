@@ -15,7 +15,7 @@
 #include "mintex-tx/tx_create_coin.h"
 #include "mintex-tx/tx_declare_candidacy.h"
 #include "mintex-tx/tx_delegate.h"
-#include "mintex-tx/tx_unbound.h"
+#include "mintex-tx/tx_unbond.h"
 #include "mintex-tx/tx_redeem_check.h"
 #include "mintex-tx/tx_set_candidate_on_off.h"
 #include "mintex-tx/tx_create_multisig_address.h"
@@ -35,7 +35,7 @@ define_tx_type_funcs(tx_buy_coin)
 define_tx_type_funcs(tx_create_coin)
 define_tx_type_funcs(tx_declare_candidacy)
 define_tx_type_funcs(tx_delegate)
-define_tx_type_funcs(tx_unbound)
+define_tx_type_funcs(tx_unbond)
 define_tx_type_funcs(tx_redeem_check)
 define_tx_type_funcs(tx_set_candidate_on)
 define_tx_type_funcs(tx_set_candidate_off)

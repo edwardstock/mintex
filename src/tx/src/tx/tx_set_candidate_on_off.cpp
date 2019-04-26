@@ -17,13 +17,26 @@ mintex::tx_set_candidate_on_off::tx_set_candidate_on_off(std::shared_ptr<mintex:
 }
 
 dev::bytes mintex::tx_set_candidate_on_off::encode() {
-    return dev::bytes();
+    dev::RLPStream out;
+    dev::RLPStream lst;
+    {
+        lst.append(m_pub_key);
+        out.appendList(lst);
+    }
+
+    return out.out();
 }
 
 void mintex::tx_set_candidate_on_off::decode_internal(dev::RLP rlp) {
-    tx_data::decode_internal(rlp);
+    m_pub_key = (dev::bytes)rlp[0];
 }
 
+void mintex::tx_set_candidate_on_off::set_pub_key(const dev::bytes& pub_key) {
+    m_pub_key = pub_key;
+}
+const dev::bytes& mintex::tx_set_candidate_on_off::get_pub_key() {
+    return m_pub_key;
+}
 
 // ON
 uint16_t mintex::tx_set_candidate_on::type() const {

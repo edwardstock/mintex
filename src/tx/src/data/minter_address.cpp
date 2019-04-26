@@ -31,6 +31,10 @@ mintex::data::minter_address::minter_address(const std::vector<uint8_t> &data) {
     m_data = data;
 }
 
+mintex::data::minter_address::minter_address(std::vector<uint8_t> &&data) {
+    m_data = std::move(data);
+}
+
 const uint8_t *mintex::data::minter_address::data() const {
     return m_data.cdata();
 }

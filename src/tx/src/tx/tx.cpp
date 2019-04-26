@@ -26,7 +26,7 @@
 #include "mintex-tx/tx_create_coin.h"
 #include "mintex-tx/tx_declare_candidacy.h"
 #include "mintex-tx/tx_delegate.h"
-#include "mintex-tx/tx_unbound.h"
+#include "mintex-tx/tx_unbond.h"
 #include "mintex-tx/tx_redeem_check.h"
 #include "mintex-tx/tx_set_candidate_on_off.h"
 #include "mintex-tx/tx_create_multisig_address.h"
@@ -106,8 +106,8 @@ void mintex::tx::create_data_from_type() {
         case mintex::tx_delegate_type::type:
             m_data_raw = mintex::tx_delegate_type::create(shared_from_this(), get_data_raw());
             break;
-        case mintex::tx_unbound_type::type:
-            m_data_raw = mintex::tx_unbound_type::create(shared_from_this(), get_data_raw());
+        case mintex::tx_unbond_type::type:
+            m_data_raw = mintex::tx_unbond_type::create(shared_from_this(), get_data_raw());
             break;
         case mintex::tx_redeem_check_type::type:
             m_data_raw = mintex::tx_redeem_check_type::create(shared_from_this(), get_data_raw());
