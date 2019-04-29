@@ -13,12 +13,17 @@
 #include <vector>
 #include "tx_send_coin.h"
 #include "tx_data.h"
+#include "mintex-tx/utils.h"
 namespace mintex {
 
     struct send_target {
         std::string coin;
         mintex::data::minter_address to;
         dev::bigint amount;
+
+        dev::bigdec18 get_amount() const {
+            return mintex::utils::humanize_value(amount);
+        }
     };
 
 class tx_multisend: public virtual mintex::tx_data {
