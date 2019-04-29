@@ -37,7 +37,7 @@
 mintex::tx::tx():
  m_chain_id(dev::bigint(chain_id::testnet)),
  m_gas_price(dev::bigint("1")),
- m_gas_coin(mintex::utils::to_bytes_fixed("MNT", 10)),
+ m_gas_coin("MNT"),
  m_payload(dev::bytes(0)),
  m_service_data(dev::bytes(0)) {
 
@@ -59,7 +59,7 @@ std::shared_ptr<mintex::tx> mintex::tx::decode(const dev::bytes &tx) {
     out->m_nonce = (dev::bigint) s[0];
     out->m_chain_id = (dev::bigint) s[1];
     out->m_gas_price = (dev::bigint) s[2];
-    out->m_gas_coin = (dev::bytes) s[3];
+    out->m_gas_coin = mintex::utils::to_string_clear((dev::bytes) s[3]);
     out->m_type = (dev::bigint) s[4];
 
     out->m_data = (dev::bytes) s[5];
@@ -71,10 +71,16 @@ std::shared_ptr<mintex::tx> mintex::tx::decode(const dev::bytes &tx) {
 
     if(out->m_signature_type == mintex::signature_type::single) {
         out->m_signature = std::make_shared<mintex::signature_single_data>();
-        out->m_signature->decode(s[9]);
+        const dev::bytes b = (dev::bytes)s[9];
+        dev::RLP inn(b);
+        dev::RLP sdata = s[9];
+        out->m_signature->decode(inn);
     } else if(out->m_signature_type == mintex::signature_type::multi) {
         out->m_signature = std::make_shared<mintex::signature_multi_data>();
-        out->m_signature->decode(s[9]);
+        const dev::bytes b = (dev::bytes)s[9];
+        dev::RLP inn(b);
+        dev::RLP sdata = s[9];
+        out->m_signature->decode(inn);
     }
 
     return out;
@@ -134,7 +140,7 @@ void mintex::tx::create_data_from_type() {
 
 }
 
-minter::Data mintex::tx::sign_single(const mintex::minter_private_key &pk) {
+minter::Data mintex::tx::sign_single(const mintex::data::minter_private_key &pk) {
     m_signature_type = mintex::signature_type::single;
 
     minter::Data raw_tx_data = minter::Data(encode(true));
@@ -196,7 +202,7 @@ dev::bytes mintex::tx::encode(bool include_signature) {
     list.append(m_nonce);
     list.append(m_chain_id);
     list.append(m_gas_price);
-    list.append(m_gas_coin);
+    list.append(mintex::utils::to_bytes_fixed(m_gas_coin, 10));
     list.append(m_type);
     list.append(m_data);
     list.append(m_payload);
@@ -213,7 +219,7 @@ dev::bytes mintex::tx::encode(bool include_signature) {
     return output.out();
 }
 
-minter::Data mintex::tx::sign_multiple(const mintex::data::minter_address &address, const mintex::minter_private_key &pk) {
+minter::Data mintex::tx::sign_multiple(const mintex::data::minter_address &address, const mintex::data::minter_private_key &pk) {
     m_signature_type = mintex::signature_type::multi;
     return minter::Data("0x0");
 }
@@ -233,8 +239,7 @@ dev::bigint mintex::tx::get_gas_price() const {
 }
 
 std::string mintex::tx::get_gas_coin() const {
-    const auto tmp = mintex::utils::to_string(m_gas_coin);
-    return mintex::utils::strip_null_bytes(tmp.c_str());
+    return m_gas_coin;
 }
 
 uint16_t mintex::tx::get_type() const {
@@ -256,56 +261,4 @@ const dev::bytes & mintex::tx::get_service_data() const {
 uint8_t mintex::tx::get_signature_type() const {
     return static_cast<uint8_t>(m_signature_type);
 }
-
-/*
-    tx &set_signature_type(uint8_t type);
- */
-
-//void coin_name(const char* name, uint8_t *bts) {
-//    size_t len = strlen(name);
-//    memcpy(bts, name, len);
-//    for (int i = len; i < 10; i++) {
-//        bts[i] = (uint8_t)0x00;
-//    }
-//}
-//
-//int copy_address(const char* address, uint8_t *out) {
-//    size_t len = strlen(address);
-//    if (len != 40 && len != 42) {
-//        return MINTER_ERR;
-//    }
-//
-//    try {
-//        auto add = minter::hexToBytes(address);
-//        if (add.size() != 20) {
-//            return MINTER_ERR;
-//        }
-//
-//        memcpy(out, &add[0], 20);
-//    } catch (const std::exception &e) {
-//        return MINTER_ERR;
-//    }
-//
-//    return MINTEX_OK;
-//}
-//
-//struct tx_send_data tx_send_init(const char *coin, const char *address, const char *amount) {
-//    struct tx_send_data out{};
-//    coin_name(coin, out.coin);
-//    copy_address(address, out.to);
-//
-//
-//    readu256BE(&out.value);
-//
-//    return out;
-//}
-//
-//void tx_send_free(struct tx_send_data* data) {
-//    free(data->coin);
-//}
-//
-//void tx_send_encode(struct tx_send_data *data, uint8_t *out) {
-//
-//}
-
 

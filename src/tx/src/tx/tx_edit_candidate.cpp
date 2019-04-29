@@ -21,7 +21,7 @@ dev::bytes mintex::tx_edit_candidate::encode() {
     dev::RLPStream out;
     dev::RLPStream lst;
     {
-        lst.append(m_pub_key.cget());
+        lst.append((dev::bytes)m_pub_key);
         lst.append(m_reward_address.get());
         lst.append(m_owner_address.get());
 
@@ -37,7 +37,12 @@ void mintex::tx_edit_candidate::decode_internal(dev::RLP rlp) {
     m_owner_address = (dev::bytes)rlp[2];
 }
 
-mintex::tx_edit_candidate &mintex::tx_edit_candidate::set_pub_key(const minter::Data &pub_key) {
+mintex::tx_edit_candidate &mintex::tx_edit_candidate::set_pub_key(const mintex::pubkey_t &pub_key) {
+    m_pub_key = pub_key;
+    return *this;
+}
+
+mintex::tx_edit_candidate &mintex::tx_edit_candidate::set_pub_key(const dev::bytes &pub_key) {
     m_pub_key = pub_key;
     return *this;
 }
@@ -52,7 +57,7 @@ mintex::tx_edit_candidate &mintex::tx_edit_candidate::set_owner_address(const mi
     return *this;
 }
 
-const minter::Data mintex::tx_edit_candidate::get_pub_key() const {
+const mintex::pubkey_t& mintex::tx_edit_candidate::get_pub_key() const {
     return m_pub_key;
 }
 

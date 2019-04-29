@@ -11,6 +11,7 @@
 #define MINTEX_TX_DELEGATE_H
 
 #include <string>
+#include "mintex-tx/minter_public_key.h"
 #include "tx_data.h"
 namespace mintex {
 
@@ -20,12 +21,13 @@ public:
     uint16_t type() const override;
     dev::bytes encode() override;
 
-    tx_delegate& set_pub_key(const minter::Data32 &pub_key);
+    tx_delegate& set_pub_key(const dev::bytes &pub_key);
+    tx_delegate& set_pub_key(const mintex::pubkey_t &pub_key);
     tx_delegate& set_coin(const char* coin);
     tx_delegate& set_stake(const char* amount);
     tx_delegate& set_stake(const dev::bigdec18 &amount);
 
-    const minter::Data32 get_pub_key() const;
+    const mintex::pubkey_t& get_pub_key() const;
     std::string get_coin() const;
     dev::bigdec18 get_stake() const;
 
@@ -33,7 +35,7 @@ protected:
     void decode_internal(dev::RLP rlp) override;
 
 private:
-    minter::Data32 m_pub_key;
+    mintex::pubkey_t m_pub_key;
     std::string m_coin;
     dev::bigint m_stake;
 };

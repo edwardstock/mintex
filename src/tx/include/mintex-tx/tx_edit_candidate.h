@@ -11,6 +11,7 @@
 #define MINTEX_TX_EDIT_CANDIDATE_H
 
 #include "tx_data.h"
+#include "minter_public_key.h"
 
 namespace mintex {
 
@@ -20,11 +21,12 @@ public:
     uint16_t type() const override;
     dev::bytes encode() override;
 
-    tx_edit_candidate& set_pub_key(const minter::Data &pub_key);
+    tx_edit_candidate& set_pub_key(const mintex::pubkey_t &pub_key);
+    tx_edit_candidate& set_pub_key(const dev::bytes &pub_key);
     tx_edit_candidate& set_reward_address(const mintex::data::minter_address &address);
     tx_edit_candidate& set_owner_address(const mintex::data::minter_address &address);
 
-    const minter::Data get_pub_key() const;
+    const mintex::pubkey_t& get_pub_key() const;
     const mintex::data::minter_address get_reward_address() const;
     const mintex::data::minter_address get_owner_address() const;
 
@@ -32,7 +34,7 @@ protected:
     void decode_internal(dev::RLP rlp) override;
 
 private:
-    minter::Data m_pub_key;
+    mintex::pubkey_t m_pub_key;
     mintex::data::minter_address m_reward_address;
     mintex::data::minter_address m_owner_address;
 };

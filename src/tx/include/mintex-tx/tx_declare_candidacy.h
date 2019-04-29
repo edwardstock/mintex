@@ -11,6 +11,7 @@
 #define MINTEX_TX_DECLARE_CANDIDACY_H
 
 #include "tx_data.h"
+#include "mintex-tx/minter_public_key.h"
 
 namespace mintex {
 
@@ -22,7 +23,8 @@ public:
 
 
     tx_declare_candidacy& set_address(const mintex::data::minter_address &address);
-    tx_declare_candidacy& set_pub_key(const minter::Data32 &pub_key);
+    tx_declare_candidacy& set_pub_key(const mintex::pubkey_t &pub_key);
+    tx_declare_candidacy& set_pub_key(const dev::bytes &pub_key);
     /// validator reward
     /// \param commission from 10 to 100 percent
     /// \return
@@ -32,7 +34,7 @@ public:
     tx_declare_candidacy& set_stake(const dev::bigdec18 &amount);
 
     const mintex::data::minter_address& get_address() const;
-    const minter::Data32& get_pub_key() const;
+    const mintex::pubkey_t& get_pub_key() const;
     unsigned get_commission() const;
     std::string get_coin() const;
     dev::bigdec18 get_stake() const;
@@ -43,7 +45,7 @@ protected:
 
 private:
     mintex::data::minter_address m_address;
-    minter::Data32 m_pub_key;
+    mintex::pubkey_t m_pub_key;
     dev::bigint m_commission;
     std::string m_coin;
     dev::bigint m_stake;

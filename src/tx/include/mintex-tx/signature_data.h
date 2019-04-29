@@ -30,6 +30,7 @@ public:
     void set_signature(mintex::signature &&sig);
     void set_signature(const uint8_t *data);
     void set_signature(dev::bytes &&v, dev::bytes &&r, dev::bytes &&s);
+    void set_signature(const dev::bytes &v, const dev::bytes &r, const dev::bytes &s);
     void set_signature(dev::bytes &&data);
     void set_signature(const dev::bytes &data);
     const dev::bytes & get_v() const;

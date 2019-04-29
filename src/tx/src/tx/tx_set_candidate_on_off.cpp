@@ -20,7 +20,7 @@ dev::bytes mintex::tx_set_candidate_on_off::encode() {
     dev::RLPStream out;
     dev::RLPStream lst;
     {
-        lst.append(m_pub_key);
+        lst.append((dev::bytes)m_pub_key);
         out.appendList(lst);
     }
 
@@ -31,10 +31,17 @@ void mintex::tx_set_candidate_on_off::decode_internal(dev::RLP rlp) {
     m_pub_key = (dev::bytes)rlp[0];
 }
 
-void mintex::tx_set_candidate_on_off::set_pub_key(const dev::bytes& pub_key) {
+mintex::tx_set_candidate_on_off& mintex::tx_set_candidate_on_off::set_pub_key(const dev::bytes& pub_key) {
     m_pub_key = pub_key;
+    return *this;
 }
-const dev::bytes& mintex::tx_set_candidate_on_off::get_pub_key() {
+
+mintex::tx_set_candidate_on_off& mintex::tx_set_candidate_on_off::set_pub_key(const mintex::pubkey_t &pub_key) {
+    m_pub_key = pub_key;
+    return *this;
+}
+
+const mintex::pubkey_t& mintex::tx_set_candidate_on_off::get_pub_key() const {
     return m_pub_key;
 }
 

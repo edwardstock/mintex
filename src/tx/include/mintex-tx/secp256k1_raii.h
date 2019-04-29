@@ -26,7 +26,7 @@ public:
     };
     using ptr_t = std::unique_ptr<secp256k1_context, secp256k1_deleter>;
 
-    secp256k1_raii(uint32_t flags) {
+    secp256k1_raii(uint32_t flags = SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY) {
         auto *ctx = secp256k1_context_create(flags);
         m_ctx = ptr_t(ctx);
     }

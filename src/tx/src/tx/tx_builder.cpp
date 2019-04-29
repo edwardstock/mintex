@@ -62,12 +62,12 @@ mintex::tx_builder &mintex::tx_builder::set_gas_price(const dev::bigint &amount)
 }
 
 mintex::tx_builder &mintex::tx_builder::set_gas_coin(const std::string &coin) {
-    m_tx->m_gas_coin = mintex::utils::to_bytes(coin);
+    m_tx->m_gas_coin = coin;
     return *this;
 }
 
 mintex::tx_builder &mintex::tx_builder::set_gas_coin(const char *coin) {
-    m_tx->m_gas_coin = mintex::utils::to_bytes_fixed(std::string(coin), 10);
+    m_tx->m_gas_coin = std::string(coin);
     return *this;
 }
 

@@ -8,20 +8,28 @@
  */
 
 #include <algorithm>
+#include <cassert>
+#include <iostream>
 #include "mintex-tx/signature_data.h"
 #include "mintex-tx/utils.h"
 
 dev::bytes mintex::signature_single_data::encode() {
-    dev::RLPStream txData;
+    dev::RLPStream out;
+    dev::RLPStream lst;
     {
-        dev::RLPStream txDataInner;
-        txDataInner.append(m_v);
-        txDataInner.append(m_r);
-        txDataInner.append(m_s);
-        txData.appendList(txDataInner);
+        lst.append(m_v);
+        lst.append(m_r);
+        lst.append(m_s);
+        out.appendList(lst);
     }
 
-    return txData.out();
+    return out.out();
+}
+
+void mintex::signature_single_data::decode(const dev::RLP &data) {
+    m_v = (dev::bytes)data[0];
+    m_r = (dev::bytes)data[1];
+    m_s = (dev::bytes)data[2];
 }
 
 void mintex::signature_single_data::set_signature(const mintex::signature &sig) {
@@ -50,12 +58,25 @@ void mintex::signature_single_data::set_signature(const uint8_t *data) {
 }
 
 void mintex::signature_single_data::set_signature(dev::bytes &&v, dev::bytes &&r, dev::bytes &&s) {
+    assert(v.size() == 1);
+    assert(r.size() == 32);
+    assert(s.size() == 32);
     m_r = std::move(r);
     m_s = std::move(s);
     m_v = std::move(v);
 }
 
+void mintex::signature_single_data::set_signature(const dev::bytes &v, const dev::bytes &r, const dev::bytes &s) {
+    assert(v.size() == 1);
+    assert(r.size() == 32);
+    assert(s.size() == 32);
+    m_r = r;
+    m_s = s;
+    m_v = v;
+}
+
 void mintex::signature_single_data::set_signature(dev::bytes &&data) {
+    assert(data.size() == 65);
     m_r.resize(32);
     m_s.resize(32);
     m_v.resize(1);
@@ -85,12 +106,6 @@ const dev::bytes &mintex::signature_single_data::get_r() const {
 
 const dev::bytes &mintex::signature_single_data::get_s() const {
     return m_s;
-}
-
-void mintex::signature_single_data::decode(const dev::RLP &data) {
-    m_v = (dev::bytes)data[0];
-    m_r = (dev::bytes)data[1];
-    m_s = (dev::bytes)data[2];
 }
 
 

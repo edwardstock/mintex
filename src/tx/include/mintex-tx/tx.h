@@ -51,7 +51,7 @@ public:
     dev::bigint get_gas_price() const;
     std::string get_gas_coin() const;
     uint16_t get_type() const;
-    template<typename T>
+    template<typename T = mintex::tx_data>
     std::shared_ptr<T> get_data() const {
         return std::dynamic_pointer_cast<T>(m_data_raw);
     }
@@ -64,8 +64,8 @@ public:
         return std::dynamic_pointer_cast<T>(m_signature);
     }
 
-    minter::Data sign_single(const mintex::minter_private_key &pk);
-    minter::Data sign_multiple(const mintex::data::minter_address &address, const mintex::minter_private_key &pk);
+    minter::Data sign_single(const mintex::data::minter_private_key &pk);
+    minter::Data sign_multiple(const mintex::data::minter_address &address, const mintex::data::minter_private_key &pk);
 
 protected:
     dev::bytes encode(bool include_signature);
@@ -78,7 +78,7 @@ private:
     dev::bigint m_nonce;
     dev::bigint m_chain_id;
     dev::bigint m_gas_price;
-    dev::bytes m_gas_coin;
+    std::string m_gas_coin;
     dev::bigint m_type;
     dev::bytes m_data;
     std::shared_ptr<mintex::tx_data> m_data_raw;

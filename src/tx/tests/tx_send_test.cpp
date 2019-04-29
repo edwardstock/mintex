@@ -29,10 +29,24 @@ TEST(TxSend, TestSendEncode) {
     data->set_coin("MNT");
     auto tx = data->build();
 
-    mintex::minter_private_key pk("df1f236d0396cc43147e44206c341a65573326e907d033690e31a21323c03a9f");
+    mintex::privkey_t pk("df1f236d0396cc43147e44206c341a65573326e907d033690e31a21323c03a9f");
     auto signedTx = tx->sign_single(pk);
 
-    std::cout << signedTx << std::endl;
+    {
+        auto decoded = mintex::tx::decode(signedTx.toHex().c_str());
+        ASSERT_STREQ("MNT", decoded->get_gas_coin().c_str());
+        ASSERT_EQ(dev::bigint("1"), decoded->get_gas_price());
+        ASSERT_EQ(mintex::testnet, decoded->get_chain_id());
+        ASSERT_EQ(dev::bigint("1"), decoded->get_nonce());
+        ASSERT_EQ((uint8_t)0x01, decoded->get_type());
+        ASSERT_EQ(dev::bytes(0), decoded->get_service_data());
+        ASSERT_EQ(dev::bytes(0), decoded->get_payload());
+        ASSERT_EQ(mintex::signature_type::single, decoded->get_signature_type());
+        std::shared_ptr<mintex::tx_send_coin> data = decoded->get_data<mintex::tx_send_coin>();
+        ASSERT_EQ(mintex::address_t("Mx0000000000000000000000000000000000000000"), data->get_to());
+        ASSERT_EQ(dev::bigdec18("10"), data->get_value());
+        ASSERT_STREQ("MNT", data->get_coin().c_str());
+    }
 
     ASSERT_STREQ(expectedTx, signedTx.toHex().c_str());
 }

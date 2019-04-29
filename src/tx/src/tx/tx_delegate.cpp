@@ -20,7 +20,7 @@ dev::bytes mintex::tx_delegate::encode() {
     dev::RLPStream out;
     dev::RLPStream lst;
     {
-        lst.append(m_pub_key.cget());
+        lst.append((dev::bytes)m_pub_key);
         lst.append(mintex::utils::to_bytes_fixed(m_coin));
         lst.append(m_stake);
 
@@ -36,7 +36,12 @@ void mintex::tx_delegate::decode_internal(dev::RLP rlp) {
     m_stake = (dev::bigint)rlp[2];
 }
 
-mintex::tx_delegate &mintex::tx_delegate::set_pub_key(const minter::Data32 &pub_key) {
+mintex::tx_delegate &mintex::tx_delegate::set_pub_key(const dev::bytes &pub_key) {
+    m_pub_key = pub_key;
+    return *this;
+}
+
+mintex::tx_delegate &mintex::tx_delegate::set_pub_key(const mintex::pubkey_t &pub_key) {
     m_pub_key = pub_key;
     return *this;
 }
@@ -56,7 +61,7 @@ mintex::tx_delegate &mintex::tx_delegate::set_stake(const dev::bigdec18 &amount)
     return *this;
 }
 
-const minter::Data32 mintex::tx_delegate::get_pub_key() const {
+const mintex::pubkey_t& mintex::tx_delegate::get_pub_key() const {
     return m_pub_key;
 }
 

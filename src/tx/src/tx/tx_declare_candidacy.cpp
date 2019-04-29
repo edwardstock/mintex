@@ -21,7 +21,7 @@ dev::bytes mintex::tx_declare_candidacy::encode() {
     dev::RLPStream lst;
     {
         lst.append(m_address.get());
-        lst.append(m_pub_key.cget());
+        lst.append((dev::bytes)m_pub_key);
         lst.append(m_commission);
         lst.append(mintex::utils::to_bytes_fixed(m_coin, 10));
         lst.append(m_stake);
@@ -45,7 +45,12 @@ mintex::tx_declare_candidacy &mintex::tx_declare_candidacy::set_address(const mi
     return *this;
 }
 
-mintex::tx_declare_candidacy &mintex::tx_declare_candidacy::set_pub_key(const minter::Data32 &pub_key) {
+mintex::tx_declare_candidacy &mintex::tx_declare_candidacy::set_pub_key(const mintex::pubkey_t &pub_key) {
+    m_pub_key = pub_key;
+    return *this;
+}
+
+mintex::tx_declare_candidacy &mintex::tx_declare_candidacy::set_pub_key(const dev::bytes &pub_key) {
     m_pub_key = pub_key;
     return *this;
 }
@@ -74,7 +79,7 @@ const mintex::data::minter_address &mintex::tx_declare_candidacy::get_address() 
     return m_address;
 }
 
-const minter::Data32 &mintex::tx_declare_candidacy::get_pub_key() const {
+const mintex::pubkey_t& mintex::tx_declare_candidacy::get_pub_key() const {
     return m_pub_key;
 }
 

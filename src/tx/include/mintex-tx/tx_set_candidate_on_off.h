@@ -11,6 +11,7 @@
 #define MINTEX_TX_SET_CANDIDATE_ON_OFF_H
 
 #include "tx_data.h"
+#include "mintex-tx/minter_public_key.h"
 
 namespace mintex {
 
@@ -20,12 +21,13 @@ public:
 
     dev::bytes encode() override;
 
-    void set_pub_key(const dev::bytes &pub_key);
-    const dev::bytes& get_pub_key();
+    tx_set_candidate_on_off& set_pub_key(const dev::bytes &pub_key);
+    tx_set_candidate_on_off& set_pub_key(const mintex::pubkey_t &pub_key);
+    const mintex::pubkey_t& get_pub_key() const;
 
 protected:
     void decode_internal(dev::RLP rlp) override;
-    dev::bytes m_pub_key;
+    mintex::pubkey_t m_pub_key;
 
 };
 

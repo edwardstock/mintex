@@ -24,12 +24,14 @@ void mintex::tx_unbond::decode_internal(dev::RLP rlp) {
 uint16_t mintex::tx_unbond::type() const {
     return mintex::tx_unbond_type::type;
 }
+
+#include <iostream>
 dev::bytes mintex::tx_unbond::encode() {
     dev::RLPStream out;
     dev::RLPStream lst;
     {
-        lst.append(m_pub_key);
-        lst.append(mintex::utils::to_bytes_fixed(m_coin));
+        lst.append((dev::bytes)m_pub_key);
+        lst.append(mintex::utils::to_bytes_fixed(m_coin, 10));
         lst.append(m_value);
         out.appendList(lst);
     }
@@ -38,6 +40,10 @@ dev::bytes mintex::tx_unbond::encode() {
 }
 
 mintex::tx_unbond &mintex::tx_unbond::set_pub_key(const dev::bytes &pub_key) {
+    m_pub_key = pub_key;
+    return *this;
+}
+mintex::tx_unbond &mintex::tx_unbond::set_pub_key(const mintex::pubkey_t &pub_key) {
     m_pub_key = pub_key;
     return *this;
 }
@@ -53,7 +59,7 @@ mintex::tx_unbond &mintex::tx_unbond::set_value(const dev::bigdec18 &value) {
     m_value = mintex::utils::normalize_value(value);
     return *this;
 }
-const dev::bytes &mintex::tx_unbond::get_pub_key() const {
+const mintex::pubkey_t &mintex::tx_unbond::get_pub_key() const {
     return m_pub_key;
 }
 std::string mintex::tx_unbond::get_coin() const {
