@@ -7,8 +7,8 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <minter/utils.h>
-#include <minter/HDKeyEncoder.h>
+#include <bip39/utils.h>
+#include <bip39/HDKeyEncoder.h>
 #include <secp256k1/include/secp256k1.h>
 #include <secp256k1/include/secp256k1_recovery.h>
 #include <secp256k1/include/secp256k1_ecdh.h>
@@ -32,7 +32,7 @@ public:
         minter::HDKey root_key = minter::HDKeyEncoder::makeBip32RootKey(seed);
         minter::HDKey ext_key = minter::HDKeyEncoder::makeExtendedKey(root_key, "m/44'/60'/0'/0/0");
 
-        std::copy(ext_key.privateKey.cget().begin(), ext_key.privateKey.cget().end(), out.get().begin());
+        std::copy(ext_key.privateKey.get().begin(), ext_key.privateKey.get().end(), out.get().begin());
 
         return out;
     }

@@ -26,7 +26,7 @@ public:
 
     void decode(const char* hexEncoded) {
         minter::Data given(hexEncoded);
-        decode_internal(dev::RLP(given.cget()));
+        decode_internal(dev::RLP(given.get()));
     }
     void decode(const dev::bytes &data) {
         decode_internal(dev::RLP(data));

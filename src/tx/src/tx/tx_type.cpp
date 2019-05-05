@@ -22,13 +22,25 @@
 #include "mintex-tx/tx_multisend.h"
 #include "mintex-tx/tx_edit_candidate.h"
 
-//define_tx_type_funcs(tx_send_coin)
-std::shared_ptr<mintex::tx_send_coin> mintex::tx_type<mintex::tx_send_coin>::create(std::shared_ptr<mintex::tx> ptr,
-                                                                                    const std::vector<uint8_t> &encodedData) {
-    auto data = std::make_shared<mintex::tx_send_coin>(ptr);
-    data->decode(encodedData);
-    return data;
-}
+const std::unordered_map<mintex::tx_type_val, std::string> mintex::tx_type_names = {
+    {mintex::tx_type_val::send_coin,         "send"},
+    {mintex::tx_type_val::sell_coin,         "sell"},
+    {mintex::tx_type_val::sell_all_coins,    "sell all"},
+    {mintex::tx_type_val::buy_coin,          "buy"},
+    {mintex::tx_type_val::create_coin,       "create coin"},
+    {mintex::tx_type_val::declare_candidacy, "declare candidacy"},
+    {mintex::tx_type_val::delegate,          "delegate"},
+    {mintex::tx_type_val::unbond,            "unbond"},
+    {mintex::tx_type_val::redeem_check,      "redeem check"},
+    {mintex::tx_type_val::set_candidate_on,  "set candidate on"},
+    {mintex::tx_type_val::set_candidate_off, "set candidate off"},
+    {mintex::tx_type_val::create_multisig,   "create multisig address"},
+    {mintex::tx_type_val::multisend,         "multisend"},
+    {mintex::tx_type_val::edit_candidate,    "edit candidate"},
+};
+
+
+define_tx_type_funcs(tx_send_coin)
 define_tx_type_funcs(tx_sell_coin)
 define_tx_type_funcs(tx_sell_all_coins)
 define_tx_type_funcs(tx_buy_coin)

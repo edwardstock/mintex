@@ -15,7 +15,7 @@
 #include <secp256k1/include/secp256k1.h>
 #include <secp256k1/include/secp256k1_ecdh.h>
 #include <secp256k1/include/secp256k1_recovery.h>
-#include <bip39/src/minter/utils.h>
+#include <bip39/utils.h>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <eth/RLP.h>
 #include <eth/vector_ref.h>

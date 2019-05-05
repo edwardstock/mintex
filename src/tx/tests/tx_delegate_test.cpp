@@ -71,7 +71,7 @@ TEST(TxUnbond, TestEncode) {
     auto signature = tx->sign_single(pk);
 
     {
-        auto decoded = mintex::tx::decode(signature.cget());
+        auto decoded = mintex::tx::decode(signature.get());
         auto data = decoded->get_data<mintex::tx_unbond>();
 
         const char* R = "ff5766c85847b37a276f3f9d027fb7c99745920fa395c7bd399cedd8265c5e1d";

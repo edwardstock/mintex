@@ -15,7 +15,7 @@
 #include <iostream>
 #include <eth/RLP.h>
 #include <string>
-#include <bip39/src/minter/utils.h>
+#include <bip39/utils.h>
 
 namespace mintex {
 namespace utils {
@@ -35,7 +35,10 @@ dev::bytes sha3k(const dev::bytes &message);
 dev::bytes sha3k(const minter::Data &message);
 std::string strip_null_bytes(const char* input);
 std::string to_string(const dev::bytes &src);
+std::string to_string(const dev::bigdec18 &src);
+std::string to_string(const dev::bigint &src);
 std::string to_string_clear(const dev::bytes &src);
+std::string to_string(uint64_t src);
 
 dev::bigint normalize_value(const char* input);
 dev::bigint normalize_value(const std::string &input);

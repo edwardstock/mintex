@@ -12,6 +12,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
 #include <eth/Common.h>
 #include <vector>
 #include "mintex-tx/tx_fwd.h"
@@ -20,6 +21,25 @@
 namespace mintex {
 
 static constexpr double FEE_BASE = 0.001;
+
+enum tx_type_val {
+  send_coin = (uint8_t)0x01,
+  sell_coin,
+  sell_all_coins,
+  buy_coin,
+  create_coin,
+  declare_candidacy,
+  delegate,
+  unbond,
+  redeem_check,
+  set_candidate_on,
+  set_candidate_off,
+  create_multisig,
+  multisend,
+  edit_candidate
+};
+
+extern const std::unordered_map<tx_type_val, std::string> tx_type_names;
 
 template<class ref_type>
 struct tx_type;
@@ -44,20 +64,20 @@ using _T##_type = tx_type<mintex::_T>
         return data; \
     } \
 
-create_tx_type(tx_send_coin, 0x01, 10);
-create_tx_type(tx_sell_coin, 0x02, 100);
-create_tx_type(tx_sell_all_coins, 0x03, 100);
-create_tx_type(tx_buy_coin, 0x04, 100);
-create_tx_type(tx_create_coin, 0x05, 1000);
-create_tx_type(tx_declare_candidacy, 0x06, 10000);
-create_tx_type(tx_delegate, 0x07, 200);
-create_tx_type(tx_unbond, 0x08, 200);
-create_tx_type(tx_redeem_check, 0x09, 30);
-create_tx_type(tx_set_candidate_on, 0x0A, 100);
-create_tx_type(tx_set_candidate_off, 0x0B, 100);
-create_tx_type(tx_create_multisig_address, 0x0C, 100);
-create_tx_type(tx_multisend, 0x0D, 100);
-create_tx_type(tx_edit_candidate, 0x0E, 10000);
+create_tx_type(tx_send_coin, tx_type_val::send_coin, 10);
+create_tx_type(tx_sell_coin, tx_type_val::sell_coin, 100);
+create_tx_type(tx_sell_all_coins, tx_type_val::sell_all_coins, 100);
+create_tx_type(tx_buy_coin, tx_type_val::buy_coin, 100);
+create_tx_type(tx_create_coin, tx_type_val::create_coin, 1000);
+create_tx_type(tx_declare_candidacy, tx_type_val::declare_candidacy, 10000);
+create_tx_type(tx_delegate, tx_type_val::delegate, 200);
+create_tx_type(tx_unbond, tx_type_val::unbond, 200);
+create_tx_type(tx_redeem_check, tx_type_val::redeem_check, 30);
+create_tx_type(tx_set_candidate_on, tx_type_val::set_candidate_on, 100);
+create_tx_type(tx_set_candidate_off, tx_type_val::set_candidate_off, 100);
+create_tx_type(tx_create_multisig_address, tx_type_val::create_multisig, 100);
+create_tx_type(tx_multisend, tx_type_val::multisend, 100);
+create_tx_type(tx_edit_candidate, tx_type_val::edit_candidate, 10000);
 
 }
 

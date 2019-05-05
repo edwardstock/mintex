@@ -1,0 +1,159 @@
+{
+  "includes": [
+    "<string>",
+    "<vector>",
+    "<nlohmann/json.hpp>",
+    "<eth/Common.h>",
+    "wallet/explorer/base.h",
+    "mintex-tx/minter_hash.h",
+    "mintex-tx/minter_address.h",
+    "mintex-tx/minter_public_key.h",
+    "mintex-tx/tx_type.h"
+  ],
+  "responses": [
+    {
+      "name": "transaction_item",
+      "fields": [
+        ["dev::bigint", "txn"],
+        ["mintex::hash_t", "hash"],
+        ["dev::bigint", "nonce"],
+        ["dev::bigint", "block"],
+        ["std::string", "timestamp"],
+        ["dev::bigdec18", "fee"],
+        ["mintex::tx_type_val", "type"],
+        ["std::string", "payload"],
+        ["mintex::address_t", "from"],
+        ["std::shared_ptr<tx_result>", "data", "data", true]
+      ]
+    },
+    {
+      "name": "tx_send_result",
+      "parent": "tx_result",
+      "fields": [
+        ["mintex::address_t", "to"],
+        ["std::string", "coin"],
+        ["dev::bigdec18", "value"]
+      ]
+    },
+    {
+      "name": "tx_create_coin_result",
+      "parent": "tx_result",
+      "fields": [
+        ["std::string", "name"],
+        ["std::string", "symbol"],
+        ["dev::bigdec18", "initial_amount"],
+        ["dev::bigdec18", "initial_reserve"],
+        ["uint32_t", "constant_reserve_ratio", "crr"]
+      ]
+    },
+    {
+      "name": "tx_convert_result",
+      "parent": "tx_result",
+      "fields": [
+        ["std::string", "coin_to_sell"],
+        ["std::string", "coin_to_buy"],
+        ["dev::bigdec18", "value_to_buy"],
+        ["dev::bigdec18", "value_to_sell"],
+        ["dev::bigdec18", "maximum_value_to_sell"],
+        ["dev::bigdec18", "minimum_value_to_buy"]
+      ]
+    },
+    {
+      "name": "tx_declare_candidacy_result",
+      "parent": "tx_result",
+      "fields": [
+        ["mintex::address_t", "address"],
+        ["mintex::pubkey_t", "pub_key"],
+        ["uint32_t", "commission"],
+        ["std::string", "coin"],
+        ["dev::bigdec18", "stake"]
+      ]
+    },
+    {
+      "name": "tx_set_candidate_on_off_result",
+      "parent": "tx_result",
+      "fields": [
+        ["mintex::pubkey_t", "pub_key"]
+      ]
+    },
+    {
+      "name": "tx_delegate_unbond_result",
+      "parent": "tx_result",
+      "fields": [
+        ["mintex::pubkey_t", "pub_key"],
+        ["std::string", "coin"],
+        ["dev::bigdec18", "stake"],
+        ["dev::bigdec18", "value"]
+      ]
+    },
+    {
+      "name": "tx_check_data_result",
+      "fields": [
+        ["std::string", "coin"],
+        ["dev::bigint", "nonce"],
+        ["dev::bigdec18", "value"],
+        ["mintex::address_t", "sender"],
+        ["dev::bigint", "due_block"]
+      ]
+    },
+    {
+      "name": "tx_redeem_check_result",
+      "parent": "tx_result",
+      "fields": [
+        ["std::string", "raw_check"],
+        ["std::string", "proof"],
+        ["dev::bigdec18", "stake"],
+        ["dev::bigdec18", "value"],
+        ["tx_check_data_result", "check"]
+      ]
+    },
+    {
+      "name": "tx_create_multisig_result",
+      "parent": "tx_result",
+      "fields": [
+        ["dev::bigint", "threshold"],
+        ["std::vector<dev::bigint>", "weights"],
+        ["std::vector<mintex::address_t>", "addresses"]
+      ]
+    },
+    {
+      "name": "tx_multisend_result",
+      "parent": "tx_result",
+      "fields": [
+        ["std::vector<tx_send_result>", "list", "items"]
+      ]
+    },
+    {
+      "name": "tx_edit_candidate_result",
+      "parent": "tx_result",
+      "fields": [
+        ["mintex::address_t", "reward_address"],
+        ["mintex::address_t", "owner_address"],
+        ["mintex::pubkey_t", "pub_key"]
+      ]
+    },
+    {
+      "name": "balance_item",
+      "fields": [
+        ["std::string", "coin"],
+        ["dev::bigdec18", "amount"]
+      ]
+    },
+    {
+      "name": "balance_items",
+      "fields": [
+        ["mintex::address_t", "address"],
+        ["std::vector<balance_item>", "balances"]
+      ]
+    },
+    {
+      "name": "delegated_item",
+      "parent": "tx_result",
+      "fields": [
+        ["mintex::pubkey_t", "pub_key"],
+        ["std::string", "coin"],
+        ["dev::bigdec18", "value"]
+      ]
+    }
+  ]
+}

@@ -63,7 +63,7 @@ TEST(TxBuy, TestValuePrecisionEncodeDecode) {
             .build();
     auto signature = tx->sign_single(pk);
 
-    auto decoded = mintex::tx::decode(signature.cget());
+    auto decoded = mintex::tx::decode(signature.get());
     std::shared_ptr<mintex::tx_buy_coin> data = decoded->get_data<mintex::tx_buy_coin>();
     ASSERT_EQ(dev::bigdec18("1.102030405060708090"), data->get_max_value_to_sell());
 

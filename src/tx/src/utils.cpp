@@ -76,7 +76,7 @@ dev::bytes mintex::utils::to_bytes(const dev::bigdec18 &num) {
 }
 
 dev::bytes mintex::utils::sha3k(const minter::Data &message) {
-    return sha3k(message.cget());
+    return sha3k(message.get());
 }
 
 dev::bytes mintex::utils::sha3k(const dev::bytes &message) {
@@ -105,6 +105,27 @@ std::string mintex::utils::to_string(const dev::bytes &src) {
         ss << item;
     }
 
+    return ss.str();
+}
+
+std::string mintex::utils::to_string(const dev::bigdec18 &src) {
+    std::stringstream ss;
+    ss << std::setprecision(std::numeric_limits<boost::multiprecision::cpp_dec_float<18>>::max_digits10);
+    ss << src;
+
+    return ss.str();
+}
+
+std::string mintex::utils::to_string(const dev::bigint &src) {
+    std::stringstream ss;
+    ss << src;
+
+    return ss.str();
+}
+
+std::string mintex::utils::to_string(uint64_t src) {
+    std::stringstream ss;
+    ss << src;
     return ss.str();
 }
 

@@ -25,6 +25,8 @@ conan_init()
 
 
 set(DISABLE_JNI ON)
+option(ENABLE_JNI OFF)
+option(ENABLE_GO OFF)
 
 if (APPLE)
 	set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -33,15 +35,8 @@ if (APPLE)
 	set(CMAKE_MACOSX_RPATH 1)
 endif ()
 
-
-
 add_subdirectory(src/tx)
 add_subdirectory(src/wallet)
+add_subdirectory(src/resp_generator)
 
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-
-
-
-#add_subdirectory(libs/eth)
+add_dependencies(mintex-wallet resp_generator)

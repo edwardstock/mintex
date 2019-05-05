@@ -10,3 +10,9 @@
 [submodule "libs/json"]
 	path = libs/json
 	url = https://github.com/nlohmann/json.git
+[submodule "libs/rang"]
+	path = libs/rang
+	url = https://github.com/agauniyal/rang.git
+[submodule "libs/rx"]
+	path = libs/rx
+	url = https://github.com/ReactiveX/RxCpp.git

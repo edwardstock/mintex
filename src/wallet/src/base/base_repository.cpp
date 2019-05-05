@@ -7,16 +7,16 @@
  * \link   https://github.com/edwardstock
  */
 
-#include "base_repository.h"
+#include "wallet/base_repository.h"
 
-mintex::net::base_repository::base_repository():
-    m_client(std::make_unique<httb::client>())
+wallet::net::base_repository::base_repository():
+    m_client(std::make_shared<httb::client>())
     {
 
 }
-mintex::net::base_repository::~base_repository() {
+wallet::net::base_repository::~base_repository() {
 
 }
-std::string mintex::net::base_repository::getBaseUrl() {
+std::string wallet::net::base_repository::getBaseUrl() const {
     return std::string();
 }

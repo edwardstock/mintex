@@ -87,7 +87,7 @@ std::shared_ptr<mintex::tx> mintex::tx::decode(const dev::bytes &tx) {
 }
 
 std::shared_ptr<mintex::tx> mintex::tx::decode(const char *hexEncoded) {
-    return decode(minter::Data(hexEncoded).cget());
+    return decode(minter::Data(hexEncoded).get());
 }
 
 /// \todo make static map, remove switch-case
@@ -147,7 +147,7 @@ minter::Data mintex::tx::sign_single(const mintex::data::minter_private_key &pk)
     minter::Data32 hash(mintex::utils::sha3k(raw_tx_data));
 
     mintex::secp256k1_raii secp(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
-    auto sig = sign_with_private(secp, hash.cget(), pk.cget());
+    auto sig = sign_with_private(secp, hash.get(), pk.get());
 
     if (!sig.success) {
         return minter::Data("0x0");

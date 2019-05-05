@@ -28,6 +28,10 @@ mintex::data::minter_address::minter_address(const char *hex) {
     m_data = address_data(address.c_str());
 }
 
+mintex::data::minter_address::minter_address(const std::string &hex): minter_address(hex.c_str()) {
+
+}
+
 mintex::data::minter_address::minter_address(const std::vector<uint8_t> &data) {
     m_data = data;
 }
@@ -66,29 +70,38 @@ uint8_t *mintex::data::minter_address::data() {
 }
 
 const std::vector<uint8_t> &mintex::data::minter_address::get() const {
-    return m_data.cget();
+    return m_data.get();
 }
 std::vector<uint8_t> &mintex::data::minter_address::get() {
     return m_data.get();
 }
 
-const std::string mintex::data::minter_address::to_string() {
+const std::string mintex::data::minter_address::to_string() const {
     return "Mx" + m_data.toHex();
 }
 
-const std::string mintex::data::minter_address::to_string_no_prefix() {
+const std::string mintex::data::minter_address::to_string_no_prefix() const {
     return m_data.toHex();
 }
 
 bool mintex::data::minter_address::operator==(const mintex::data::minter_address &other) const noexcept {
-    return m_data.cget() == other.m_data.cget();
+    return m_data.get() == other.m_data.get();
 }
 bool mintex::data::minter_address::operator==(const minter::Data &other) const noexcept {
-    return m_data.cget() == other.cget();
+    return m_data.get() == other.get();
 }
 bool mintex::data::minter_address::operator!=(const mintex::data::minter_address &other) const noexcept {
     return !(operator==(other));
 }
 bool mintex::data::minter_address::operator!=(const minter::Data &other) const noexcept {
     return !(operator==(other));
+}
+
+mintex::data::minter_address::operator std::string() const noexcept {
+    return to_string();
+}
+
+std::ostream &operator<<(std::ostream &out, const mintex::address_t &address) {
+    out << address.to_string();
+    return out;
 }
