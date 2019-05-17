@@ -23,12 +23,12 @@
         ["mintex::tx_type_val", "type"],
         ["std::string", "payload"],
         ["mintex::address_t", "from"],
-        ["std::shared_ptr<tx_result>", "data", "data", true]
+        ["std::shared_ptr<wallet::explorer::tx_result>", "data", "data", true]
       ]
     },
     {
       "name": "tx_send_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["mintex::address_t", "to"],
         ["std::string", "coin"],
@@ -37,7 +37,7 @@
     },
     {
       "name": "tx_create_coin_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["std::string", "name"],
         ["std::string", "symbol"],
@@ -48,7 +48,7 @@
     },
     {
       "name": "tx_convert_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["std::string", "coin_to_sell"],
         ["std::string", "coin_to_buy"],
@@ -60,7 +60,7 @@
     },
     {
       "name": "tx_declare_candidacy_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["mintex::address_t", "address"],
         ["mintex::pubkey_t", "pub_key"],
@@ -71,14 +71,14 @@
     },
     {
       "name": "tx_set_candidate_on_off_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["mintex::pubkey_t", "pub_key"]
       ]
     },
     {
       "name": "tx_delegate_unbond_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["mintex::pubkey_t", "pub_key"],
         ["std::string", "coin"],
@@ -98,7 +98,7 @@
     },
     {
       "name": "tx_redeem_check_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["std::string", "raw_check"],
         ["std::string", "proof"],
@@ -109,7 +109,7 @@
     },
     {
       "name": "tx_create_multisig_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["dev::bigint", "threshold"],
         ["std::vector<dev::bigint>", "weights"],
@@ -118,14 +118,14 @@
     },
     {
       "name": "tx_multisend_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["std::vector<tx_send_result>", "list", "items"]
       ]
     },
     {
       "name": "tx_edit_candidate_result",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["mintex::address_t", "reward_address"],
         ["mintex::address_t", "owner_address"],
@@ -148,11 +148,22 @@
     },
     {
       "name": "delegated_item",
-      "parent": "tx_result",
+      "parent": "wallet::explorer::tx_result",
       "fields": [
         ["mintex::pubkey_t", "pub_key"],
         ["std::string", "coin"],
         ["dev::bigdec18", "value"]
+      ]
+    },
+    {
+      "name": "reward_item",
+      "fields": [
+        ["uint64_t", "block"],
+        ["std::string", "role"],
+        ["dev::bigdec18", "amount"],
+        ["mintex::address_t", "address"],
+        ["mintex::pubkey_t", "validator"],
+        ["std::string", "timestamp"]
       ]
     }
   ]

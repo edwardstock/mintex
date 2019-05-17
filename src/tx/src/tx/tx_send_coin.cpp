@@ -57,7 +57,7 @@ mintex::tx_send_coin &mintex::tx_send_coin::set_value(const dev::bigint &raw) {
 }
 
 uint16_t mintex::tx_send_coin::type() const {
-    return mintex::tx_send_coin_type::type;
+    return mintex::tx_send_coin_type::type();
 }
 
 std::string mintex::tx_send_coin::get_coin() const {

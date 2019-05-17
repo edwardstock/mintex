@@ -22,7 +22,7 @@ void mintex::tx_unbond::decode_internal(dev::RLP rlp) {
 }
 
 uint16_t mintex::tx_unbond::type() const {
-    return mintex::tx_unbond_type::type;
+    return mintex::tx_unbond_type::type();
 }
 
 #include <iostream>

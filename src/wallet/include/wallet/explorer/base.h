@@ -7,8 +7,8 @@
  * \link   https://github.com/edwardstock
  */
 
-#ifndef MINTEX_BASE_H
-#define MINTEX_BASE_H
+#ifndef MINTEX_EXPLORER_BASE_H
+#define MINTEX_EXPLORER_BASE_H
 
 #include <string>
 #include <unordered_map>
@@ -92,4 +92,4 @@ struct adl_serializer<wallet::explorer::base_result<T>> {
 };
 }
 
-#endif //MINTEX_BASE_H
+#endif //MINTEX_EXPLORER_BASE_H

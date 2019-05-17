@@ -17,9 +17,15 @@ namespace cmd {
 
 class init_controller: public wallet::command_controller {
 public:
-    init_controller(std::shared_ptr<const wallet::app> app);
+    init_controller(std::shared_ptr<wallet::app> app);
     std::string usage() const override;
     std::string get_command_name() const override;
+    void run_action(const std::string &action, int argc, char **argv) override;
+    bool verify_action_argument() const override;
+    std::unordered_map<std::string, std::string> get_actions_descriptions() const override;
+
+    ACTION_DECLARE(init);
+    bool before_action(const std::string &action, int argc, char **argv) override;
 };
 
 } // app

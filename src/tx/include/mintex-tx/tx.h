@@ -12,6 +12,7 @@
 
 //#include <uint256/uint256.h>
 #include <memory>
+#include <unordered_map>
 #include <secp256k1/include/secp256k1.h>
 #include <secp256k1/include/secp256k1_ecdh.h>
 #include <secp256k1/include/secp256k1_recovery.h>
@@ -32,6 +33,8 @@ typedef enum {
   mainnet = (uint8_t) 0x01,
   testnet = (uint8_t) 0x02,
 } chain_id;
+
+extern const std::unordered_map<std::string, chain_id> chain_id_str_map;
 
 class tx_builder;
 

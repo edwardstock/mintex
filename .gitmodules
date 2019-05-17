@@ -13,6 +13,9 @@
 [submodule "libs/rang"]
 	path = libs/rang
 	url = https://github.com/agauniyal/rang.git
-[submodule "libs/rx"]
-	path = libs/rx
-	url = https://github.com/ReactiveX/RxCpp.git
+[submodule "libs/Aes256"]
+	path = libs/Aes256
+	url = https://github.com/Urban82/Aes256.git
+[submodule "libs/libfort"]
+	path = libs/libfort
+	url = https://github.com/seleznevae/libfort.git

@@ -14,7 +14,7 @@ mintex::tx_delegate::tx_delegate(std::shared_ptr<mintex::tx> tx) : tx_data(std::
 
 }
 uint16_t mintex::tx_delegate::type() const {
-    return mintex::tx_delegate_type::type;
+    return mintex::tx_delegate_type::type();
 }
 dev::bytes mintex::tx_delegate::encode() {
     dev::RLPStream out;

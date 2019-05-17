@@ -54,7 +54,7 @@ set(SOURCES
     src/tx/tx_type.cpp
     src/tx/tx_builder.cpp
     src/data/minter_public_key.cpp
-    src/data/minter_hash.cpp)
+    src/data/minter_hash.cpp src/data/minter_private_key.cpp)
 
 add_library(${PROJECT_NAME} ${SOURCES})
 
@@ -114,7 +114,7 @@ if (WITH_TEST)
 	    tests/tx_multisend_test.cpp
 	    tests/tx_multisig_test.cpp
 	    tests/tx_check_test.cpp
-	    )
+	    tests/test_allocator.cpp)
 
 	add_executable(${PROJECT_NAME_TEST} ${TEST_SOURCES})
 	target_compile_options(${PROJECT_NAME_TEST} PUBLIC -Wno-unused-parameter)
@@ -123,6 +123,8 @@ if (WITH_TEST)
 	#	target_include_directories(${PROJECT_NAME_TEST} PUBLIC ${RP_DIR}/src)
 
 	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::gtest)
+	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::libsodium)
+	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::fmt)
 	target_link_libraries(${PROJECT_NAME_TEST} ${PROJECT_NAME})
 
 	if (WITH_COVERAGE)

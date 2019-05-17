@@ -116,6 +116,14 @@ std::string mintex::utils::to_string(const dev::bigdec18 &src) {
     return ss.str();
 }
 
+std::string mintex::utils::to_string_lp(const dev::bigdec18 &src) {
+    std::stringstream ss;
+    ss << std::setprecision(std::numeric_limits<boost::multiprecision::cpp_dec_float<4>>::max_digits10);
+    ss << src;
+
+    return ss.str();
+}
+
 std::string mintex::utils::to_string(const dev::bigint &src) {
     std::stringstream ss;
     ss << src;
@@ -127,6 +135,10 @@ std::string mintex::utils::to_string(uint64_t src) {
     std::stringstream ss;
     ss << src;
     return ss.str();
+}
+
+std::string mintex::utils::to_string(const std::vector<char> &data) {
+    return std::string(data.begin(), data.end());
 }
 
 std::string mintex::utils::to_string_clear(const dev::bytes &src) {

@@ -14,7 +14,7 @@ mintex::tx_multisend::tx_multisend(std::shared_ptr<mintex::tx> tx) : tx_data(std
 
 }
 uint16_t mintex::tx_multisend::type() const {
-    return mintex::tx_multisend_type::type;
+    return mintex::tx_multisend_type::type();
 }
 
 #include <iostream>

@@ -16,7 +16,7 @@ mintex::tx_create_multisig_address::tx_create_multisig_address(std::shared_ptr<m
 
 }
 uint16_t mintex::tx_create_multisig_address::type() const {
-    return mintex::tx_create_multisig_address_type::type;
+    return mintex::tx_create_multisig_address_type::type();
 }
 dev::bytes mintex::tx_create_multisig_address::encode() {
     dev::RLPStream out;

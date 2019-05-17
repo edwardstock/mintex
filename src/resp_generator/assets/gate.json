@@ -1,0 +1,53 @@
+{
+  "includes": [
+    "<string>",
+    "<vector>",
+    "<nlohmann/json.hpp>",
+    "<eth/Common.h>",
+    "wallet/gate/base.h",
+    "mintex-tx/minter_hash.h",
+    "mintex-tx/minter_address.h",
+    "mintex-tx/minter_public_key.h",
+    "mintex-tx/tx_type.h"
+  ],
+  "responses": [
+    {
+      "name": "gas_value",
+      "fields": [
+        ["dev::bigint", "gas"]
+      ]
+    },
+    {
+      "name": "commission_value",
+      "fields": [
+        ["dev::bigint", "commission", "value"]
+      ]
+    },
+    {
+      "name": "exchange_sell_value",
+      "fields": [
+        ["dev::bigint", "will_get"],
+        ["dev::bigint", "commission"]
+      ]
+    },
+    {
+      "name": "exchange_buy_value",
+      "fields": [
+        ["dev::bigint", "will_pay"],
+        ["dev::bigint", "commission"]
+      ]
+    },
+    {
+      "name": "tx_count_value",
+      "fields": [
+        ["dev::bigint", "nonce", "count"]
+      ]
+    },
+    {
+      "name": "tx_send_result",
+      "fields": [
+        ["mintex::hash_t", "hash"]
+      ]
+    }
+  ]
+}

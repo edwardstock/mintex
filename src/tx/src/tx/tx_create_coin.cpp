@@ -14,7 +14,7 @@ mintex::tx_create_coin::tx_create_coin(std::shared_ptr<mintex::tx> tx) : tx_data
 }
 
 uint16_t mintex::tx_create_coin::type() const {
-    return mintex::tx_create_coin_type::type;
+    return mintex::tx_create_coin_type::type();
 }
 dev::bytes mintex::tx_create_coin::encode() {
     dev::RLPStream out;

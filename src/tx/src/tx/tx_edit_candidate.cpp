@@ -14,7 +14,7 @@ mintex::tx_edit_candidate::tx_edit_candidate(std::shared_ptr<mintex::tx> tx) : t
 }
 
 uint16_t mintex::tx_edit_candidate::type() const {
-    return mintex::tx_edit_candidate_type::type;
+    return mintex::tx_edit_candidate_type::type();
 }
 
 dev::bytes mintex::tx_edit_candidate::encode() {

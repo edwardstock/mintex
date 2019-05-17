@@ -16,7 +16,6 @@
 #include <secp256k1/include/secp256k1_ecdh.h>
 #include <mintex-tx/secp256k1_raii.h>
 
-
 #include "mintex-tx/tx.h"
 #include "mintex-tx/utils.h"
 #include "mintex-tx/tx_send_coin.h"
@@ -34,12 +33,17 @@
 #include "mintex-tx/tx_edit_candidate.h"
 #include "mintex-tx/tx_type.h"
 
-mintex::tx::tx():
- m_chain_id(dev::bigint(chain_id::testnet)),
- m_gas_price(dev::bigint("1")),
- m_gas_coin("MNT"),
- m_payload(dev::bytes(0)),
- m_service_data(dev::bytes(0)) {
+const std::unordered_map<std::string, mintex::chain_id> mintex::chain_id_str_map = {
+    {"mainnet", mintex::mainnet},
+    {"testnet", mintex::testnet},
+};
+
+mintex::tx::tx() :
+    m_chain_id(dev::bigint(chain_id::testnet)),
+    m_gas_price(dev::bigint("1")),
+    m_gas_coin("MNT"),
+    m_payload(dev::bytes(0)),
+    m_service_data(dev::bytes(0)) {
 
 }
 
@@ -65,19 +69,19 @@ std::shared_ptr<mintex::tx> mintex::tx::decode(const dev::bytes &tx) {
     out->m_data = (dev::bytes) s[5];
     out->create_data_from_type();
 
-    out->m_payload = (dev::bytes)s[6];
-    out->m_service_data = (dev::bytes)s[7];
+    out->m_payload = (dev::bytes) s[6];
+    out->m_service_data = (dev::bytes) s[7];
     out->m_signature_type = (dev::bigint) s[8];
 
-    if(out->m_signature_type == mintex::signature_type::single) {
+    if (out->m_signature_type == mintex::signature_type::single) {
         out->m_signature = std::make_shared<mintex::signature_single_data>();
-        const dev::bytes b = (dev::bytes)s[9];
+        const dev::bytes b = (dev::bytes) s[9];
         dev::RLP inn(b);
         dev::RLP sdata = s[9];
         out->m_signature->decode(inn);
-    } else if(out->m_signature_type == mintex::signature_type::multi) {
+    } else if (out->m_signature_type == mintex::signature_type::multi) {
         out->m_signature = std::make_shared<mintex::signature_multi_data>();
-        const dev::bytes b = (dev::bytes)s[9];
+        const dev::bytes b = (dev::bytes) s[9];
         dev::RLP inn(b);
         dev::RLP sdata = s[9];
         out->m_signature->decode(inn);
@@ -93,49 +97,35 @@ std::shared_ptr<mintex::tx> mintex::tx::decode(const char *hexEncoded) {
 /// \todo make static map, remove switch-case
 void mintex::tx::create_data_from_type() {
 
-    switch (get_type()) {
-        case mintex::tx_send_coin_type::type:
-            m_data_raw = mintex::tx_send_coin_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_sell_coin_type::type:
-            m_data_raw = mintex::tx_sell_coin_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_sell_all_coins_type::type:
-            m_data_raw = mintex::tx_sell_all_coins_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_buy_coin_type::type:
-            m_data_raw = mintex::tx_buy_coin_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_create_coin_type::type:
-            m_data_raw = mintex::tx_create_coin_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_declare_candidacy_type::type:
-            m_data_raw = mintex::tx_declare_candidacy_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_delegate_type::type:
-            m_data_raw = mintex::tx_delegate_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_unbond_type::type:
-            m_data_raw = mintex::tx_unbond_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_redeem_check_type::type:
-            m_data_raw = mintex::tx_redeem_check_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_set_candidate_on_type::type:
-            m_data_raw = mintex::tx_set_candidate_on_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_set_candidate_off_type::type:
-            m_data_raw = mintex::tx_set_candidate_off_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_create_multisig_address_type::type:
-            m_data_raw = mintex::tx_create_multisig_address_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_multisend_type::type:
-            m_data_raw = mintex::tx_multisend_type::create(shared_from_this(), get_data_raw());
-            break;
-        case mintex::tx_edit_candidate_type::type:
-            m_data_raw = mintex::tx_edit_candidate_type::create(shared_from_this(), get_data_raw());
-            break;
+    // sadly, can't use switch-case on non constexpr type() function, and type can't be constexpr
+    if (get_type() == mintex::tx_send_coin_type::type()) {
+        m_data_raw = mintex::tx_send_coin_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_sell_coin_type::type()) {
+        m_data_raw = mintex::tx_sell_coin_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_sell_all_coins_type::type()) {
+        m_data_raw = mintex::tx_sell_all_coins_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_buy_coin_type::type()) {
+        m_data_raw = mintex::tx_buy_coin_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_create_coin_type::type()) {
+        m_data_raw = mintex::tx_create_coin_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_declare_candidacy_type::type()) {
+        m_data_raw = mintex::tx_declare_candidacy_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_delegate_type::type()) {
+        m_data_raw = mintex::tx_delegate_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_unbond_type::type()) {
+        m_data_raw = mintex::tx_unbond_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_redeem_check_type::type()) {
+        m_data_raw = mintex::tx_redeem_check_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_set_candidate_on_type::type()) {
+        m_data_raw = mintex::tx_set_candidate_on_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_set_candidate_off_type::type()) {
+        m_data_raw = mintex::tx_set_candidate_off_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_create_multisig_address_type::type()) {
+        m_data_raw = mintex::tx_create_multisig_address_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_multisend_type::type()) {
+        m_data_raw = mintex::tx_multisend_type::create(shared_from_this(), get_data_raw());
+    } else if (get_type() == mintex::tx_edit_candidate_type::type()) {
+        m_data_raw = mintex::tx_edit_candidate_type::create(shared_from_this(), get_data_raw());
     }
 
 }
@@ -146,7 +136,7 @@ minter::Data mintex::tx::sign_single(const mintex::data::minter_private_key &pk)
     minter::Data raw_tx_data = minter::Data(encode(true));
     minter::Data32 hash(mintex::utils::sha3k(raw_tx_data));
 
-    mintex::secp256k1_raii secp(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+    mintex::secp256k1_raii secp;
     auto sig = sign_with_private(secp, hash.get(), pk.get());
 
     if (!sig.success) {
@@ -219,11 +209,11 @@ dev::bytes mintex::tx::encode(bool include_signature) {
     return output.out();
 }
 
-minter::Data mintex::tx::sign_multiple(const mintex::data::minter_address &address, const mintex::data::minter_private_key &pk) {
+minter::Data mintex::tx::sign_multiple(const mintex::data::minter_address &address,
+                                       const mintex::data::minter_private_key &pk) {
     m_signature_type = mintex::signature_type::multi;
     return minter::Data("0x0");
 }
-
 
 // GETTERS
 dev::bigint mintex::tx::get_nonce() const {
@@ -246,15 +236,15 @@ uint16_t mintex::tx::get_type() const {
     return static_cast<uint16_t>(m_type);
 }
 
-const dev::bytes& mintex::tx::get_data_raw() const {
+const dev::bytes &mintex::tx::get_data_raw() const {
     return m_data;
 }
 
-const dev::bytes& mintex::tx::get_payload() const {
+const dev::bytes &mintex::tx::get_payload() const {
     return m_payload;
 }
 
-const dev::bytes & mintex::tx::get_service_data() const {
+const dev::bytes &mintex::tx::get_service_data() const {
     return m_service_data;
 }
 

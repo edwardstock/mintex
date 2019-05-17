@@ -9,7 +9,8 @@
 
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
-#include <wallet/explorer/transaction.h>
+#include "wallet/explorer/repository.h"
+#include "wallet/explorer/results.hpp"
 
 TEST(ExplorerTransaciton, DeserializeHistoryTransaction) {
     nlohmann::json j = R"({

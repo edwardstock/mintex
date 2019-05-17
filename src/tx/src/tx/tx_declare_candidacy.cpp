@@ -14,7 +14,7 @@ mintex::tx_declare_candidacy::tx_declare_candidacy(std::shared_ptr<mintex::tx> t
 
 }
 uint16_t mintex::tx_declare_candidacy::type() const {
-    return mintex::tx_declare_candidacy_type::type;
+    return mintex::tx_declare_candidacy_type::type();
 }
 dev::bytes mintex::tx_declare_candidacy::encode() {
     dev::RLPStream out;

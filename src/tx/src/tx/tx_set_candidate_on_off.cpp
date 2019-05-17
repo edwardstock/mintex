@@ -47,7 +47,7 @@ const mintex::pubkey_t& mintex::tx_set_candidate_on_off::get_pub_key() const {
 
 // ON
 uint16_t mintex::tx_set_candidate_on::type() const {
-    return mintex::tx_set_candidate_on_type::type;
+    return mintex::tx_set_candidate_on_type::type();
 }
 mintex::tx_set_candidate_on::tx_set_candidate_on(std::shared_ptr<mintex::tx> tx) : tx_set_candidate_on_off(tx), tx_data(tx) {
 
@@ -62,7 +62,7 @@ dev::bytes mintex::tx_set_candidate_on::encode() {
 // OFF
 
 uint16_t mintex::tx_set_candidate_off::type() const {
-    return mintex::tx_set_candidate_off_type::type;
+    return mintex::tx_set_candidate_off_type::type();
 }
 mintex::tx_set_candidate_off::tx_set_candidate_off(std::shared_ptr<mintex::tx> tx) : tx_set_candidate_on_off(tx), tx_data(tx) {
 

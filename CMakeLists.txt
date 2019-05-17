@@ -9,6 +9,16 @@ project(mintex
 set(CMAKE_CXX_STANDARD 14)
 set(RP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(RP_BD ${CMAKE_BINARY_DIR})
+set(MINTER_CHAIN "mainnet")
+
+if (MINTER_CHAIN STREQUAL "mainnet")
+	message(STATUS "Network: ${MINTER_CHAIN}")
+elseif (MINTER_CHAIN STREQUAL "testnet")
+	message(STATUS "Network: ${MINTER_CHAIN}")
+else ()
+	message(FATAL_ERROR "Unknown Network flavor: ${MINTER_CHAIN}")
+endif ()
+add_definitions(-DMINTER_CHAIN=\"${MINTER_CHAIN}\")
 
 set(CMAKE_CXX_FLAGS_DEBUG -gdwarf-3)
 
@@ -28,11 +38,25 @@ set(DISABLE_JNI ON)
 option(ENABLE_JNI OFF)
 option(ENABLE_GO OFF)
 
-if (APPLE)
-	set(CMAKE_SKIP_BUILD_RPATH FALSE)
-	set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-	set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+# linux clang
+if (NOT APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	set(CMAKE_CXX_FLAGS "-Wl,-rpath=${CMAKE_BINARY_DIR}/lib ${CMAKE_CXX_FLAGS} ")
+
+	# MOJAVE
+elseif (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 	set(CMAKE_MACOSX_RPATH 1)
+	set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_CXX_LINKER_FLAGS "${CMAKE_CXX_LINKER_FLAGS} -std=c++14 -stdlib=libc++ -undefined dynamic_lookup")
+
+	# apple clang
+elseif (APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+	set(CMAKE_MACOSX_RPATH 1)
+	set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
+	set(CMAKE_CXX_LINKER_FLAGS "${CMAKE_CXX_LINKER_FLAGS} -std=c++14 -stdlib=libc++ -undefined dynamic_lookup")
+
+else ()
+	set(CMAKE_CXX_FLAGS "-rdynamic ${CMAKE_CXX_FLAGS}    ") #-Wl,-rpath=${CMAKE_INSTALL_PREFIX}/lib
+	set(CMAKE_CXX_LINKER_FLAGS "")
 endif ()
 
 add_subdirectory(src/tx)

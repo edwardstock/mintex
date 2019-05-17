@@ -15,7 +15,7 @@ mintex::tx_sell_all_coins::tx_sell_all_coins(std::shared_ptr<mintex::tx> tx) : t
 }
 
 uint16_t mintex::tx_sell_all_coins::type() const {
-    return mintex::tx_sell_all_coins_type::type;
+    return mintex::tx_sell_all_coins_type::type();
 }
 dev::bytes mintex::tx_sell_all_coins::encode() {
     dev::RLPStream out;

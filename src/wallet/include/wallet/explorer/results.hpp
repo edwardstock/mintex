@@ -28,23 +28,23 @@ struct transaction_item {
 	mintex::tx_type_val type;
 	std::string payload;
 	mintex::address_t from;
-	std::shared_ptr<tx_result> data;
+	std::shared_ptr<wallet::explorer::tx_result> data;
 	static ::nlohmann::json _data_encode(nlohmann::json &j, const ::wallet::explorer::transaction_item& resp);
 	static void _data_decode(const nlohmann::json &j, ::wallet::explorer::transaction_item& resp);
 };
-struct tx_send_result : public tx_result  {
+struct tx_send_result : public wallet::explorer::tx_result  {
 	mintex::address_t to;
 	std::string coin;
 	dev::bigdec18 value;
 };
-struct tx_create_coin_result : public tx_result  {
+struct tx_create_coin_result : public wallet::explorer::tx_result  {
 	std::string name;
 	std::string symbol;
 	dev::bigdec18 initial_amount;
 	dev::bigdec18 initial_reserve;
 	uint32_t crr;
 };
-struct tx_convert_result : public tx_result  {
+struct tx_convert_result : public wallet::explorer::tx_result  {
 	std::string coin_to_sell;
 	std::string coin_to_buy;
 	dev::bigdec18 value_to_buy;
@@ -52,17 +52,17 @@ struct tx_convert_result : public tx_result  {
 	dev::bigdec18 maximum_value_to_sell;
 	dev::bigdec18 minimum_value_to_buy;
 };
-struct tx_declare_candidacy_result : public tx_result  {
+struct tx_declare_candidacy_result : public wallet::explorer::tx_result  {
 	mintex::address_t address;
 	mintex::pubkey_t pub_key;
 	uint32_t commission;
 	std::string coin;
 	dev::bigdec18 stake;
 };
-struct tx_set_candidate_on_off_result : public tx_result  {
+struct tx_set_candidate_on_off_result : public wallet::explorer::tx_result  {
 	mintex::pubkey_t pub_key;
 };
-struct tx_delegate_unbond_result : public tx_result  {
+struct tx_delegate_unbond_result : public wallet::explorer::tx_result  {
 	mintex::pubkey_t pub_key;
 	std::string coin;
 	dev::bigdec18 stake;
@@ -75,22 +75,22 @@ struct tx_check_data_result {
 	mintex::address_t sender;
 	dev::bigint due_block;
 };
-struct tx_redeem_check_result : public tx_result  {
+struct tx_redeem_check_result : public wallet::explorer::tx_result  {
 	std::string raw_check;
 	std::string proof;
 	dev::bigdec18 stake;
 	dev::bigdec18 value;
 	tx_check_data_result check;
 };
-struct tx_create_multisig_result : public tx_result  {
+struct tx_create_multisig_result : public wallet::explorer::tx_result  {
 	dev::bigint threshold;
 	std::vector<dev::bigint> weights;
 	std::vector<mintex::address_t> addresses;
 };
-struct tx_multisend_result : public tx_result  {
+struct tx_multisend_result : public wallet::explorer::tx_result  {
 	std::vector<tx_send_result> items;
 };
-struct tx_edit_candidate_result : public tx_result  {
+struct tx_edit_candidate_result : public wallet::explorer::tx_result  {
 	mintex::address_t reward_address;
 	mintex::address_t owner_address;
 	mintex::pubkey_t pub_key;
@@ -103,10 +103,18 @@ struct balance_items {
 	mintex::address_t address;
 	std::vector<balance_item> balances;
 };
-struct delegated_item : public tx_result  {
+struct delegated_item : public wallet::explorer::tx_result  {
 	mintex::pubkey_t pub_key;
 	std::string coin;
 	dev::bigdec18 value;
+};
+struct reward_item {
+	uint64_t block;
+	std::string role;
+	dev::bigdec18 amount;
+	mintex::address_t address;
+	mintex::pubkey_t validator;
+	std::string timestamp;
 };
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::transaction_item& resp) {
 	if(j.find("txn") != j.end() && !j.at("txn").is_null()) j.at("txn").get_to<dev::bigint>(resp.txn);
@@ -312,6 +320,24 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::delegated_item&
 		{"pub_key", resp.pub_key},
 		{"coin", resp.coin},
 		{"value", resp.value},
+	};
+}
+inline void from_json(const nlohmann::json& j, ::wallet::explorer::reward_item& resp) {
+	if(j.find("block") != j.end() && !j.at("block").is_null()) j.at("block").get_to<uint64_t>(resp.block);
+	if(j.find("role") != j.end() && !j.at("role").is_null()) j.at("role").get_to<std::string>(resp.role);
+	if(j.find("amount") != j.end() && !j.at("amount").is_null()) j.at("amount").get_to<dev::bigdec18>(resp.amount);
+	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<mintex::address_t>(resp.address);
+	if(j.find("validator") != j.end() && !j.at("validator").is_null()) j.at("validator").get_to<mintex::pubkey_t>(resp.validator);
+	if(j.find("timestamp") != j.end() && !j.at("timestamp").is_null()) j.at("timestamp").get_to<std::string>(resp.timestamp);
+}
+inline void to_json(nlohmann::json& j, const ::wallet::explorer::reward_item& resp) {
+	j = nlohmann::json{
+		{"block", resp.block},
+		{"role", resp.role},
+		{"amount", resp.amount},
+		{"address", resp.address},
+		{"validator", resp.validator},
+		{"timestamp", resp.timestamp},
 	};
 }
 

@@ -3,8 +3,9 @@ cmake
 
 [requires]
 toolboxpp/2.0.0@scatter/latest
-httb/0.2.1@scatter/latest
+httb/0.2.2@scatter/latest
 fmt/5.3.0@bincrafters/stable
+libsodium/1.0.16@bincrafters/stable
 
 boost_program_options/1.69.0@bincrafters/stable
 boost_log/1.69.0@bincrafters/stable
@@ -14,3 +15,8 @@ boost_filesystem/1.69.0@bincrafters/stable
 
 #test
 gtest/1.8.1@bincrafters/stable
+
+[options]
+libsodium:shared=False
+libsodium:fPIC=True
+

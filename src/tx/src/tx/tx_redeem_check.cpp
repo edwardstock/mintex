@@ -15,7 +15,7 @@ mintex::tx_redeem_check::tx_redeem_check(std::shared_ptr<mintex::tx> tx)
 }
 
 uint16_t mintex::tx_redeem_check::type() const {
-    return mintex::tx_redeem_check_type::type;
+    return mintex::tx_redeem_check_type::type();
 }
 dev::bytes mintex::tx_redeem_check::encode() {
     dev::RLPStream out;

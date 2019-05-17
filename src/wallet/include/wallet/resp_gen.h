@@ -77,6 +77,17 @@ struct adl_serializer<mintex::pubkey_t > {
 };
 
 template <>
+struct adl_serializer<mintex::privkey_t > {
+  static inline void to_json(json& j, const mintex::privkey_t& val) {
+      j = val.toHex();
+  }
+
+  static inline void from_json(const json& j, mintex::privkey_t& val) {
+      val = mintex::privkey_t(j.get<std::string>().c_str());
+  }
+};
+
+template <>
 struct adl_serializer<mintex::hash_t > {
   static inline void to_json(json& j, const mintex::hash_t& val) {
       j = val.to_string();

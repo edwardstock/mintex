@@ -10,9 +10,11 @@
 #ifndef MINTEX_ACCOUNT_CONTROLLER_H
 #define MINTEX_ACCOUNT_CONTROLLER_H
 
+#include <unordered_map>
+#include <memory>
 #include "app.h"
 
-#include <unordered_map>
+#include "wallet/data/secret_storage.h"
 namespace wallet {
 namespace cmd {
 
@@ -22,15 +24,17 @@ public:
         balance,
         last_transactions
     };
-    account_controller(std::shared_ptr<const wallet::app> app);
+    account_controller(std::shared_ptr<wallet::app> app);
     std::string get_command_name() const override;
+    std::unordered_map<std::string, std::string> get_actions_descriptions() const override;
 
     std::string usage() const override;
 
-    CMD_DECLARE(balance);
-    CMD_DECLARE(lastx);
+    bool before_action(const std::string &action, int argc, char **argv) override;
+    ACTION_DECLARE(balance);
+    ACTION_DECLARE(lastx);
 private:
-
+     std::unique_ptr<wallet::secret_storage> m_storage;
 };
 
 }
