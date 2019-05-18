@@ -16,6 +16,7 @@
 #include <sodium.h>
 #include <nlohmann/json.hpp>
 #include <bip39/HDKeyEncoder.h>
+#include <bip39/utils.h>
 #include <bip39/Bip39Mnemonic.h>
 #include <bip39/PCGRand.hpp>
 #include <aes256.hpp>
@@ -26,6 +27,7 @@
 
 #include "wallet/kv_storage.h"
 #include "wallet/settings.h"
+#include "mintex-tx/tx.h"
 #include "mintex-tx/utils.h"
 #include "mintex-tx/minter_private_key.h"
 #include "mintex-tx/minter_public_key.h"
@@ -60,6 +62,11 @@ struct secret_data {
       mnemonic = std::string("");
       priv_key.clear();
   }
+
+  minter::Data sign(std::shared_ptr<mintex::tx> tx) {
+      return tx->sign_single(priv_key);
+  }
+
 };
 
 void from_json(const nlohmann::json &j, secret_data &data);

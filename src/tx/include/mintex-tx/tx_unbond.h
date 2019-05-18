@@ -22,6 +22,7 @@ public:
     tx_unbond& set_pub_key(const mintex::pubkey_t &pub_key);
     tx_unbond& set_pub_key(const dev::bytes &pub_key);
     tx_unbond& set_coin(const char* coin);
+    tx_unbond& set_coin(const std::string &coin);
     tx_unbond& set_value(const char* value);
     tx_unbond& set_value(const dev::bigdec18 &value);
 

@@ -133,7 +133,7 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
             }
         }
 
-        p.start();
+
         for (const auto &item: summary_stake) {
 
             validators_sum_table << item.first;
@@ -158,7 +158,6 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
             }
 
             validators_sum_table << fort::endr;
-            p.stop();
         }
 
         wallet::term::print_success_message("Summary Delegated");

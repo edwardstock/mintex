@@ -22,9 +22,9 @@ void wallet::from_json(const nlohmann::json &j, wallet::secret_data &data) {
 }
 
 void wallet::to_json(nlohmann::json &j, const wallet::secret_data &data) {
-    j = nlohmann::json {
-        {"mnemonic", data.mnemonic},
-        {"priv_key", data.priv_key},
+    j = nlohmann::json{
+        {"mnemonic",     data.mnemonic},
+        {"priv_key",     data.priv_key},
         {"derive_index", data.derive_index},
     };
 }
@@ -32,7 +32,7 @@ void wallet::to_json(nlohmann::json &j, const wallet::secret_data &data) {
 wallet::secret_storage::secret_storage() :
     m_storage() {
 }
-wallet::secret_storage::secret_storage(wallet::db::kv_storage &&storage):
+wallet::secret_storage::secret_storage(wallet::db::kv_storage &&storage) :
     m_storage(std::move(storage)) {
 
 }
@@ -45,7 +45,7 @@ wallet::secret_storage::~secret_storage() {
 
 void wallet::secret_storage::init() {
     auto status = m_storage.open();
-    if(!status.ok()) {
+    if (!status.ok()) {
         throw std::runtime_error(status.ToString());
     }
 }
@@ -55,12 +55,12 @@ void wallet::secret_storage::init(const std::string &pass) {
     m_pass_mlock = wallet::crypto::mlock_guard(m_passkey);
 
     m_storage.add_keybased_interceptor(KEY_SECRETS, {
-                                  std::bind(&secret_storage::decrypt_data, this, std::placeholders::_1),
-                                  std::bind(&secret_storage::encrypt_data, this, std::placeholders::_1)
-                              });
+        std::bind(&secret_storage::decrypt_data, this, std::placeholders::_1),
+        std::bind(&secret_storage::encrypt_data, this, std::placeholders::_1)
+    });
 
     auto status = m_storage.open();
-    if(!status.ok()) {
+    if (!status.ok()) {
         throw std::runtime_error(status.ToString());
     }
 }
@@ -84,9 +84,10 @@ std::string wallet::secret_storage::decrypt_data(const std::string &encrypted) {
 void wallet::secret_storage::add(const wallet::secret_data &data) {
     auto secrets = get_secrets();
     auto addresses = get_addresses();
-    for(const auto& item: secrets) {
-        if(item.priv_key == data.priv_key) {
-            throw std::runtime_error(fmt::format("This private {0} already exists", mintex::address_t(data.priv_key).to_string()));
+    for (const auto &item: secrets) {
+        if (item.priv_key == data.priv_key) {
+            throw std::runtime_error(fmt::format("This private {0} already exists",
+                                                 mintex::address_t(data.priv_key).to_string()));
         }
     }
 
@@ -98,7 +99,7 @@ void wallet::secret_storage::add(const wallet::secret_data &data) {
         std::stringstream ss;
         ss << j;
         leveldb::Status status = m_storage.set(KEY_SECRETS, ss.str());
-        if(!status.ok()) {
+        if (!status.ok()) {
             throw std::runtime_error(status.ToString());
         }
     }
@@ -108,7 +109,7 @@ void wallet::secret_storage::add(const wallet::secret_data &data) {
         std::stringstream ss;
         ss << j;
         leveldb::Status status = m_storage.set(KEY_ADDRESSES, ss.str());
-        if(!status.ok()) {
+        if (!status.ok()) {
             throw std::runtime_error(status.ToString());
         }
     }
@@ -119,14 +120,14 @@ void wallet::secret_storage::remove(const wallet::secret_data &data) {
 
     bool found = false;
     size_t idx = 0;
-    for(const auto& item: secrets) {
-        if(item.priv_key == data.priv_key) {
+    for (const auto &item: secrets) {
+        if (item.priv_key == data.priv_key) {
             found = true;
             break;
         }
         idx++;
     }
-    if(!found) {
+    if (!found) {
         return;
     }
 
@@ -137,29 +138,29 @@ void wallet::secret_storage::remove(size_t index) {
     auto secrets = get_secrets();
     auto addresses = get_addresses();
 
-    if(index < 0 || (index > (secrets.size()-1)) ) {
+    if (index < 0 || (index > (secrets.size() - 1))) {
         return;
     }
 
     secrets.erase(secrets.begin() + index);
     addresses.erase(addresses.begin() + index);
-    
+
     {
         nlohmann::json jsecrets = secrets;
         std::stringstream ss;
         ss << jsecrets;
         leveldb::Status status = m_storage.set(KEY_SECRETS, ss.str());
-        if(!status.ok()) {
+        if (!status.ok()) {
             throw std::runtime_error(status.ToString());
         }
     }
-    
+
     {
         nlohmann::json jaddresses = addresses;
         std::stringstream ss;
         ss << jaddresses;
         leveldb::Status status = m_storage.set(KEY_ADDRESSES, ss.str());
-        if(!status.ok()) {
+        if (!status.ok()) {
             throw std::runtime_error(status.ToString());
         }
     }
@@ -167,12 +168,12 @@ void wallet::secret_storage::remove(size_t index) {
 
 void wallet::secret_storage::purge() {
     auto sec_rem_status = m_storage.remove(KEY_SECRETS);
-    if(!sec_rem_status.ok()) {
+    if (!sec_rem_status.ok()) {
         throw new std::runtime_error(sec_rem_status.ToString());
     }
 
     auto add_rem_status = m_storage.remove(KEY_ADDRESSES);
-    if(!add_rem_status.ok()) {
+    if (!add_rem_status.ok()) {
         throw new std::runtime_error(add_rem_status.ToString());
     }
 }
@@ -181,7 +182,7 @@ std::vector<wallet::secret_data> wallet::secret_storage::get_secrets() const {
     leveldb::Status status;
     std::string res = m_storage.get(KEY_SECRETS, &status);
     std::vector<secret_data> data;
-    if(status.ok() && !res.empty()) {
+    if (status.ok() && !res.empty()) {
         auto j = nlohmann::json::parse(res);
         j.get_to<std::vector<secret_data>>(data);
     }
@@ -191,7 +192,7 @@ std::vector<wallet::secret_data> wallet::secret_storage::get_secrets() const {
 
 wallet::secret_data wallet::secret_storage::get_secret(size_t index) const {
     auto secrets = get_secrets();
-    if(index < 0 || index > (secrets.size()-1)) {
+    if (index < 0 || index > (secrets.size() - 1)) {
         throw wallet::out_of_bound_error("Invalid account index");
     }
 
@@ -202,7 +203,7 @@ std::vector<mintex::address_t> wallet::secret_storage::get_addresses() const {
     leveldb::Status status;
     std::string res = m_storage.get(KEY_ADDRESSES, &status);
     std::vector<mintex::address_t> data;
-    if(status.ok() && !res.empty()) {
+    if (status.ok() && !res.empty()) {
         auto j = nlohmann::json::parse(res);
         j.get_to<std::vector<mintex::address_t>>(data);
     }
@@ -212,7 +213,7 @@ std::vector<mintex::address_t> wallet::secret_storage::get_addresses() const {
 
 mintex::address_t wallet::secret_storage::get_address(size_t index) const {
     auto addresses = get_addresses();
-    if(index < 0 || index > (addresses.size()-1)) {
+    if (index < 0 || index > (addresses.size() - 1)) {
         throw wallet::out_of_bound_error("Invalid account index");
     }
 
@@ -227,25 +228,21 @@ std::unique_ptr<wallet::secret_storage> wallet::secret_storage::create(bool encr
         return res;
     }
 
-    std::string pass;
-    if(sets->has_saved_pass()) {
-        pass = sets->passkey;
+    std::string pw;
+    if (sets->has_saved_pass()) {
+        pw = sets->passkey;
     }
 
-    char pass_tmp[32];
-    char* pw = pass_tmp;
-    ssize_t pass_len = wallet::term::password("Please, type your password to work with encrypted data", &pw, 32, '*', stdin);
+    pw = toolboxpp::console::promptPassword("Please, type your password to work with encrypted data", 32);
     std::cout << std::endl;
-    pass = std::string(pw);
 
-    while (!wallet::crypto::verify_argon2i(pass, sets->passhash)) {
+    while (!wallet::crypto::verify_argon2i(pw, sets->passhash)) {
         wallet::term::print_colored_message("Password incorrect", rang::fg::black, rang::bg::red);
         std::cout << std::endl;
-        pass_len = wallet::term::password("Please, type your password to work with encrypted data", &pw, 32, '*', stdin);
-        pass = std::string(pw);
+        pw = toolboxpp::console::promptPassword("Please, type your password to work with encrypted data", 32);
     }
     std::cout << std::endl;
 
-    res->init(pass);
+    res->init(pw);
     return res;
 }

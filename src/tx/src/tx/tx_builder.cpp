@@ -150,7 +150,7 @@ std::shared_ptr<mintex::tx_delegate> mintex::tx_builder::tx_delegate() {
     return std::make_shared<mintex::tx_delegate>(m_tx);
 }
 
-std::shared_ptr<mintex::tx_unbond> mintex::tx_builder::tx_unbound() {
+std::shared_ptr<mintex::tx_unbond> mintex::tx_builder::tx_unbond() {
     return std::make_shared<mintex::tx_unbond>(m_tx);
 }
 

@@ -63,7 +63,7 @@ public:
     std::shared_ptr<mintex::tx_create_coin> tx_create_coin();
     std::shared_ptr<mintex::tx_declare_candidacy> tx_declare_candidacy();
     std::shared_ptr<mintex::tx_delegate> tx_delegate();
-    std::shared_ptr<mintex::tx_unbond> tx_unbound();
+    std::shared_ptr<mintex::tx_unbond> tx_unbond();
     std::shared_ptr<mintex::tx_redeem_check> tx_redeem_check();
     std::shared_ptr<mintex::tx_set_candidate_on> tx_set_candidate_on();
     std::shared_ptr<mintex::tx_set_candidate_off> tx_set_candidate_off();

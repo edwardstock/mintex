@@ -56,7 +56,7 @@ void wallet::term::progress_indeterminate::start() {
 
         uint32_t i = 0;
         while (m_started) {
-            std::cout << "\r" << rang::fgB::yellow << syms[i%syms.size()] << std::flush;
+            std::cout << "\r" << rang::fgB::yellow << syms[i%syms.size()] << rang::style::reset << std::flush;
             std::this_thread::sleep_for(500ms);
             i++;
         }
@@ -68,80 +68,72 @@ void wallet::term::progress_indeterminate::stop() {
         return;
     }
     std::cout << "\r" << "        " << std::flush;
-    std::cout << rang::style::reset;
     m_started = false;
     m_handler->join();
     m_handler = nullptr;
 }
+void wallet::term::print_colored_message(const std::string &message, rang::fg fg, rang::bg bg) {
+    using namespace toolboxpp::strings;
+    size_t target_len = 76;
 
-ssize_t wallet::term::password(const std::string &message, char **pw, size_t sz, int mask, FILE *fp) {
-    if (!pw || !sz || !fp) return -1;       /* validate input   */
-#ifdef MAXPW
-    if (sz > MAXPW) sz = MAXPW;
-#endif
+    std::vector<std::string> message_parts = toolboxpp::strings::splitByLength(message, target_len);
 
-    std::cout << message << ": ";
-
-    if (*pw == nullptr) {              /* reallocate if no address */
-        void *tmp = realloc(*pw, sz * sizeof **pw);
-        if (!tmp)
-            return -1;
-        memset(tmp, 0, sz);    /* initialize memory to 0   */
-        *pw = static_cast<char *>(tmp);
-    }
-
-    size_t idx = 0;         /* index, number of chars in read   */
-    int c = 0;
-
-    termios old_kbd_mode;    /* orig keyboard settings   */
-    termios new_kbd_mode;
-
-    if (tcgetattr(0, &old_kbd_mode)) { /* save orig settings   */
-        fprintf(stderr, "%s() error: tcgetattr failed.\n", __func__);
-        return -1;
-    }   /* copy old to new */
-    memcpy(&new_kbd_mode, &old_kbd_mode, sizeof(struct termios));
-
-    new_kbd_mode.c_lflag &= ~(ICANON | ECHO);  /* new kbd flags */
-    new_kbd_mode.c_cc[VTIME] = 0;
-    new_kbd_mode.c_cc[VMIN] = 1;
-    if (tcsetattr(0, TCSANOW, &new_kbd_mode)) {
-        fprintf(stderr, "%s() error: tcsetattr failed.\n", __func__);
-        return -1;
-    }
-
-    /* read chars from fp, mask if valid char specified */
-    while (((c = fgetc(fp)) != '\n' && c != EOF && idx < sz - 1) ||
-        (idx == sz - 1 && c == 127)) {
-        if (c != 127) {
-            if (31 < mask && mask < 127)    /* valid ascii char */
-                fputc(mask, stdout);
-            (*pw)[idx++] = c;
-        } else if (idx > 0) {         /* handle backspace (del)   */
-            if (31 < mask && mask < 127) {
-                fputc(0x8, stdout);
-                fputc(' ', stdout);
-                fputc(0x8, stdout);
-            }
-            (*pw)[--idx] = 0;
+    std::cout << bg << fg << repeat(" ", target_len + 4) << rang::fg::reset << rang::bg::reset << std::endl;
+    for (const auto &msg: message_parts) {
+        std::cout << bg << fg << "  " << msg << "  ";
+        if (msg.length() + 2 < target_len) {
+            std::cout << repeat(" ", target_len - msg.length());
         }
-    }
-    (*pw)[idx] = 0; /* null-terminate   */
 
-    /* reset original keyboard  */
-    if (tcsetattr(0, TCSANOW, &old_kbd_mode)) {
-        fprintf(stderr, "%s() error: tcsetattr failed.\n", __func__);
-        return -1;
+        std::cout << rang::fg::reset << rang::bg::reset << std::endl;
     }
 
-    if (idx == sz - 1 && c != '\n') /* warn if pw truncated */
-        fprintf(stderr, " (%s() warning: truncated at %zu chars.)\n",
-                __func__, sz - 1);
-
-    return idx; /* number of chars in passwd    */
+    std::cout << bg << fg << repeat(" ", target_len + 4) << rang::fg::reset << rang::bg::reset << std::endl;
 }
-std::string wallet::term::prompt_password(const std::string &message, size_t pass_size) {
-    char tmp[pass_size];
+void wallet::term::print_error_message(const std::string &message) {
+    print_colored_message(message, rang::fg::black, rang::bg::red);
+}
+void wallet::term::print_success_message(const std::string &message) {
+    print_colored_message(message, rang::fg::black, rang::bg::green);
+}
+void wallet::term::print_warning_message(const std::string &message) {
+    print_colored_message(message, rang::fg::black, rang::bg::yellow);
+}
+void wallet::term::print_message_block(const std::string &title, const std::string &message, rang::fg fg, rang::bg bg, size_t target_len) {
+    using namespace toolboxpp::strings;
+    std::vector<std::string> title_parts = toolboxpp::strings::splitByLength(title, target_len);
+    std::vector<std::string> message_parts = toolboxpp::strings::splitByLength(message, target_len);
 
-    return std::string();
+    size_t title_offset;
+    if (title_parts.size() == 1) {
+        title_offset = target_len - title.length();
+        title_offset /= 2;
+    } else {
+        title_offset = 0;
+    }
+
+    std::cout << bg << fg << repeat(" ", target_len + 4) << rang::fg::reset << rang::bg::reset << std::endl;
+    if (!title_offset) {
+        for (const auto &msg: title_parts) {
+            std::cout << bg << fg << "  " << msg << "  " << rang::fg::reset << rang::bg::reset << std::endl;
+        }
+    } else {
+        std::cout << bg << fg << "  ";
+        std::cout << repeat(" ", title_offset);
+        std::cout << rang::style::underline << title_parts[0] << rang::style::reset << bg << fg;
+        std::cout << repeat(" ", title_offset+1);
+        std::cout << "  " << rang::fg::reset << rang::bg::reset << std::endl;
+    }
+
+    std::cout << bg << fg << repeat(" ", target_len + 4) << rang::fg::reset << rang::bg::reset << std::endl;
+    for (const auto &msg: message_parts) {
+        std::cout << bg << fg << "  " << msg << "  ";
+        if (msg.length() + 2 < target_len) {
+            std::cout << repeat(" ", target_len - msg.length());
+        }
+
+        std::cout << rang::fg::reset << rang::bg::reset << std::endl;
+    }
+
+    std::cout << bg << fg << repeat(" ", target_len + 4) << rang::fg::reset << rang::bg::reset << std::endl;
 }

@@ -51,6 +51,10 @@ mintex::tx_unbond &mintex::tx_unbond::set_coin(const char* coin) {
     m_coin = std::string(coin);
     return *this;
 }
+mintex::tx_unbond &mintex::tx_unbond::set_coin(const std::string &coin) {
+    m_coin = coin;
+    return *this;
+}
 mintex::tx_unbond &mintex::tx_unbond::set_value(const char* value) {
     m_value = mintex::utils::normalize_value(value);
     return *this;

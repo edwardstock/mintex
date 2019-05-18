@@ -33,7 +33,7 @@ set(INCLUDE_FILES
     include/wallet/data/secret_storage.h
     include/wallet/settings.h
     include/wallet/crypto.h
-    include/wallet/except.h include/wallet/gate/repository.h include/wallet/gate/base.h include/wallet/gate/exchange_calculator.h)
+    include/wallet/except.h include/wallet/gate/repository.h include/wallet/gate/base.h include/wallet/gate/exchange_calculator.h include/wallet/data_validator.h)
 
 set(SOURCE_FILES
     ${INCLUDE_FILES}
@@ -49,7 +49,7 @@ set(SOURCE_FILES
     src/settings.cpp
     src/data/secret_storage.cpp
     src/crypto.cpp
-    )
+    src/data_validator.cpp)
 
 option(JSON_BuildTests "" OFF)
 option(JSON_MultipleHeaders "" OFF)
@@ -59,10 +59,12 @@ add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES})
 
 if (MINTER_CHAIN STREQUAL "mainnet")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER_API=\"https://explorer-api.minter.network/api/v1/\")
+	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER=\"https://explorer.minter.network/\")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_GATE_API=\"https://gate.apps.minter.network/api/v1/\")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_COIN=\"BIP\")
 elseif (MINTER_CHAIN STREQUAL "testnet")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER_API=\"https://explorer-api.minter.network/api/v1/\")
+	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER=\"https://testnet.explorer.minter.network/\")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_GATE_API=\"https://gate.apps.minter.network/api/v1/\")
 	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_COIN=\"MNT\")
 endif ()

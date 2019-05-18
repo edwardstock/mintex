@@ -51,6 +51,11 @@ mintex::tx_delegate &mintex::tx_delegate::set_coin(const char *coin) {
     return *this;
 }
 
+mintex::tx_delegate &mintex::tx_delegate::set_coin(const std::string &coin) {
+    m_coin = coin;
+    return *this;
+}
+
 mintex::tx_delegate &mintex::tx_delegate::set_stake(const char *amount) {
     m_stake = mintex::utils::normalize_value(amount);
     return *this;
