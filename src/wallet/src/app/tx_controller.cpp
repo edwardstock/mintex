@@ -248,8 +248,8 @@ void wallet::cmd::tx_controller::action_buy(const boost::program_options::variab
     tx_builder->set_chain_id(mintex::chain_id_str_map.at(std::string(MINTER_CHAIN)));
     tx_builder->set_payload(std::move(payload));
     auto data = tx_builder->tx_buy_coin();
-    data->set_coin_to_buy(to_coin.c_str());
-    data->set_coin_to_sell(from_coin.c_str());
+    data->set_coin_to_buy(to_coin);
+    data->set_coin_to_sell(from_coin);
     data->set_value_to_buy(amount);
     data->set_max_value_to_sell(calc_result.amount);
 
@@ -403,14 +403,14 @@ void wallet::cmd::tx_controller::action_sell(const boost::program_options::varia
     std::shared_ptr<mintex::tx> tx;
     if (sell_all) {
         auto data = tx_builder->tx_sell_all_coins();
-        data->set_coin_to_buy(to_coin.c_str());
-        data->set_coin_to_sell(from_coin.c_str());
+        data->set_coin_to_buy(to_coin);
+        data->set_coin_to_sell(from_coin);
         data->set_min_value_to_buy(calc_result.amount);
         tx = data->build();
     } else {
         auto data = tx_builder->tx_sell_coin();
-        data->set_coin_to_buy(to_coin.c_str());
-        data->set_coin_to_sell(from_coin.c_str());
+        data->set_coin_to_buy(to_coin);
+        data->set_coin_to_sell(from_coin);
         data->set_value_to_sell(amount);
         data->set_min_value_to_buy(calc_result.amount);
         tx = data->build();

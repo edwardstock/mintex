@@ -41,6 +41,10 @@ mintex::tx_sell_coin& mintex::tx_sell_coin::set_coin_to_sell(const char* coin) {
     m_coin_to_sell = std::string(coin);
     return *this;
 }
+mintex::tx_sell_coin &mintex::tx_sell_coin::set_coin_to_sell(const std::string &coin) {
+    m_coin_to_sell = coin;
+    return *this;
+}
 mintex::tx_sell_coin& mintex::tx_sell_coin::set_value_to_sell(const char* amount) {
     m_value_to_sell = mintex::utils::normalize_value(amount);
     return *this;
@@ -53,7 +57,15 @@ mintex::tx_sell_coin& mintex::tx_sell_coin::set_coin_to_buy(const char* coin) {
     m_coin_to_buy = std::string(coin);
     return *this;
 }
+mintex::tx_sell_coin &mintex::tx_sell_coin::set_coin_to_buy(const std::string &coin) {
+    m_coin_to_buy = coin;
+    return *this;
+}
 mintex::tx_sell_coin& mintex::tx_sell_coin::set_min_value_to_buy(const char* amount) {
+    m_min_value_to_buy = mintex::utils::normalize_value(amount);
+    return *this;
+}
+mintex::tx_sell_coin &mintex::tx_sell_coin::set_min_value_to_buy(const std::string &amount) {
     m_min_value_to_buy = mintex::utils::normalize_value(amount);
     return *this;
 }

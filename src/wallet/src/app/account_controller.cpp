@@ -43,6 +43,7 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
 
     progress_indeterminate p;
     repository repo;
+    wallet::gate::repository gate_repo;
 
     balance_items balance_data;
     delegations_result_t delegations_data;
@@ -77,6 +78,8 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
     executor.execute();
     p.stop();
 
+    dev::bigdec18 all_actives_in_bip = dev::bigdec18("0");
+
     wallet::term::print_success_message("Balance: " + balance_data.address.to_string());
 
     fort::table balance_table;
@@ -84,7 +87,29 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
     balance_table << "Coin" << "Balance" << fort::endr;
     {
         for (auto &item: balance_data.balances) {
-            balance_table << item.coin << to_string(item.amount) << fort::endr;
+            balance_table << item.coin;
+            if (!toolboxpp::strings::equalsIgnoreCase(std::string(MINTER_COIN), item.coin)) {
+                gate_repo.get_exchange_sell_currency(item.coin, item.amount, std::string(MINTER_COIN))
+                         ->success([&item, &balance_table, &all_actives_in_bip](wallet::gate::base_result<wallet::gate::exchange_sell_value> result) {
+                           all_actives_in_bip += mintex::utils::humanize_value(result.data.will_get);
+                           balance_table
+                               << fmt::format("{0} (~{1} {2})",
+                                              to_string(item.amount),
+                                              mintex::utils::to_string_lp(mintex::utils::humanize_value(result.data.will_get)),
+                                              std::string(MINTER_COIN)
+                               );
+                         })
+                         ->error([&balance_table,&item](httb::response resp,
+                                                               wallet::gate::base_result<wallet::gate::exchange_sell_value> result) {
+                           std::cerr << resp.getBody() << std::endl;
+                           balance_table << to_string(item.amount);
+                         })
+                         ->execute()->handle().wait();
+            } else {
+                all_actives_in_bip += item.amount;
+                balance_table << to_string(item.amount);
+            }
+            balance_table << fort::endr;
         }
     }
     std::cout << balance_table.to_string();
@@ -122,7 +147,7 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
     validators_sum_table << fort::header;
     validators_sum_table << "Coin" << "Delegated Stake" << fort::endr;
     {
-        wallet::gate::repository gate_repo;
+
 
         std::unordered_map<std::string, dev::bigdec18> summary_stake;
         for (const auto &item: delegations_data) {
@@ -139,7 +164,8 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
             validators_sum_table << item.first;
             if (!toolboxpp::strings::equalsIgnoreCase(std::string(MINTER_COIN), item.first)) {
                 gate_repo.get_exchange_sell_currency(item.first, item.second, std::string(MINTER_COIN))
-                         ->success([&item, &validators_sum_table](wallet::gate::base_result<wallet::gate::exchange_sell_value> result) {
+                         ->success([&item, &validators_sum_table, &all_actives_in_bip](wallet::gate::base_result<wallet::gate::exchange_sell_value> result) {
+                           all_actives_in_bip += mintex::utils::humanize_value(result.data.will_get);
                            validators_sum_table
                                << fmt::format("{0} (~{1} {2})",
                                               to_string(item.second),
@@ -155,6 +181,7 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
                          ->execute()->handle().wait();
             } else {
                 validators_sum_table << to_string(item.second);
+                all_actives_in_bip += item.second;
             }
 
             validators_sum_table << fort::endr;
@@ -170,6 +197,13 @@ void wallet::cmd::account_controller::action_balance(const po::variables_map &op
             std::cout << validators_sum_table.to_string();
         }
     }
+
+    fort::table all_actives_table;
+    all_actives_table << fort::header << "Coin" << "Volume" << fort::endr;
+    all_actives_table << MINTER_COIN << to_string(all_actives_in_bip) << fort::endr;
+
+    wallet::term::print_success_message("All actives (including frozen) in " + std::string(MINTER_COIN)+"s");
+    std::cout << all_actives_table.to_string();
 
 }
 void wallet::cmd::account_controller::action_lastx(const po::variables_map &opts) {

@@ -58,6 +58,11 @@ mintex::tx_buy_coin& mintex::tx_buy_coin::set_coin_to_buy(const char *coin) {
     return *this;
 }
 
+mintex::tx_buy_coin& mintex::tx_buy_coin::set_coin_to_buy(const std::string &coin) {
+    m_coin_to_buy = coin;
+    return *this;
+}
+
 mintex::tx_buy_coin& mintex::tx_buy_coin::set_value_to_buy(const char* valueDec) {
     m_value_to_buy = mintex::utils::normalize_value(valueDec);
     return *this;
@@ -74,6 +79,11 @@ mintex::tx_buy_coin& mintex::tx_buy_coin::set_value_to_buy(const dev::bigint &va
 }
 
 mintex::tx_buy_coin& mintex::tx_buy_coin::set_coin_to_sell(const char *coin) {
+    m_coin_to_sell = std::string(coin);
+    return *this;
+}
+
+mintex::tx_buy_coin& mintex::tx_buy_coin::set_coin_to_sell(const std::string &coin) {
     m_coin_to_sell = std::string(coin);
     return *this;
 }

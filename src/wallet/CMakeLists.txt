@@ -33,7 +33,7 @@ set(INCLUDE_FILES
     include/wallet/data/secret_storage.h
     include/wallet/settings.h
     include/wallet/crypto.h
-    include/wallet/except.h include/wallet/gate/repository.h include/wallet/gate/base.h include/wallet/gate/exchange_calculator.h include/wallet/data_validator.h)
+    include/wallet/except.h include/wallet/gate/repository.h include/wallet/gate/base.h include/wallet/gate/exchange_calculator.h include/wallet/data_validator.h include/wallet/data/simple_storage.h)
 
 set(SOURCE_FILES
     ${INCLUDE_FILES}
