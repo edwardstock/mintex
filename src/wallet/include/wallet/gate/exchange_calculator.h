@@ -12,10 +12,10 @@
 #include <string>
 #include <functional>
 #include <httb/httb.h>
-#include <eth/Common.h>
+#include <minter/eth/Common.h>
 #include <wallet/data/secret_storage.h>
 #include "wallet/gate/repository.h"
-#include "mintex-tx/tx.h"
+#include <minter/tx.hpp>
 
 namespace wallet {
 namespace gate {
@@ -54,12 +54,12 @@ class exchange_calculator {
             })
             ->success([&complete_listener](base_result<exchange_buy_value> res) {
                 exchange_calc_result out;
-                out.amount = mintex::utils::humanize_value(res.data.will_pay);
-                out.commission = mintex::utils::humanize_value(res.data.commission);
+                out.amount = minter::utils::humanize_value(res.data.will_pay);
+                out.commission = minter::utils::humanize_value(res.data.commission);
 
                 complete_listener(out);
             })
-            ->execute()->handle().wait();
+            ->execute()->handle().run();
         } else {
             auto task = repo.get_exchange_sell_currency(source_coin, amount, target_coin);
             task
@@ -68,12 +68,12 @@ class exchange_calculator {
                 })
                 ->success([&complete_listener](base_result<exchange_sell_value> res) {
                   exchange_calc_result out;
-                  out.amount = mintex::utils::humanize_value(res.data.will_get);
-                  out.commission = mintex::utils::humanize_value(res.data.commission);
+                  out.amount = minter::utils::humanize_value(res.data.will_get);
+                  out.commission = minter::utils::humanize_value(res.data.commission);
 
                   complete_listener(out);
                 })
-                ->execute()->handle().wait();
+                ->execute()->handle().run();
         }
     }
 

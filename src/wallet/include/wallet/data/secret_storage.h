@@ -15,47 +15,47 @@
 #include <memory>
 #include <sodium.h>
 #include <nlohmann/json.hpp>
-#include <bip39/HDKeyEncoder.h>
-#include <bip39/utils.h>
-#include <bip39/Bip39Mnemonic.h>
-#include <bip39/PCGRand.hpp>
+#include <minter/bip39/HDKeyEncoder.h>
+#include <minter/bip39/utils.h>
+#include <minter/bip39/Bip39Mnemonic.h>
+#include <minter/bip39/PCGRand.hpp>
 #include <aes256.hpp>
 #include <random>
 #include <vector>
 #include <rang.hpp>
 #include <toolboxpp.hpp>
+#include <minter/tx.hpp>
+#include <minter/tx/utils.h>
+#include <minter/private_key.h>
+#include <minter/public_key.h>
+#include <minter/address.h>
 
 #include "wallet/kv_storage.h"
 #include "wallet/settings.h"
-#include "mintex-tx/tx.h"
-#include "mintex-tx/utils.h"
-#include "mintex-tx/minter_private_key.h"
-#include "mintex-tx/minter_public_key.h"
-#include "mintex-tx/minter_address.h"
 #include "wallet/crypto.h"
 
 namespace wallet {
 
 struct secret_data {
   std::string mnemonic;
-  mintex::privkey_t priv_key;
+  minter::privkey_t priv_key;
   uint32_t derive_index = 0;
 
   static secret_data from_mnemonic(const std::string &mnemonic, uint32_t derive_index = 0) {
       secret_data sd;
       sd.mnemonic = std::move(mnemonic);
-      sd.priv_key = mintex::privkey_t::from_mnemonic(sd.mnemonic.c_str(), derive_index);
+      sd.priv_key = minter::privkey_t::from_mnemonic(sd.mnemonic.c_str(), derive_index);
       sd.derive_index = derive_index;
 
       return sd;
   }
 
-  mintex::pubkey_t get_pub_key(bool compressed = false) const {
+  minter::pubkey_t get_pub_key(bool compressed = false) const {
       return priv_key.get_public_key(compressed);
   }
 
-  mintex::address_t get_address() const {
-      return mintex::address_t(get_pub_key());
+  minter::address_t get_address() const {
+      return minter::address_t(get_pub_key());
   }
 
   void cleanup() {
@@ -63,7 +63,7 @@ struct secret_data {
       priv_key.clear();
   }
 
-  minter::Data sign(std::shared_ptr<mintex::tx> tx) {
+  minter::Data sign(std::shared_ptr<minter::tx> tx) {
       return tx->sign_single(priv_key);
   }
 
@@ -93,8 +93,8 @@ class secret_storage {
     void purge();
     std::vector<secret_data> get_secrets() const;
     secret_data get_secret(size_t index) const;
-    std::vector<mintex::address_t> get_addresses() const;
-    mintex::address_t get_address(size_t index) const;
+    std::vector<minter::address_t> get_addresses() const;
+    minter::address_t get_address(size_t index) const;
 
  private:
     std::string encrypt_data(const std::string &decrypted);

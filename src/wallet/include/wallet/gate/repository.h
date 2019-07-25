@@ -13,15 +13,15 @@
 #include <memory>
 #include <sstream>
 #include <nlohmann/json.hpp>
-#include <bip39/utils.h>
-#include "mintex-tx/utils.h"
+#include <minter/bip39/utils.h>
+#include <minter/tx/utils.h>
 #include "wallet/base_repository.h"
 #include "wallet/gate/results.hpp"
 
 
 using namespace wallet::net;
-using namespace mintex;
-using namespace mintex::utils;
+using namespace minter;
+using namespace minter::utils;
 
 namespace wallet {
 namespace gate {
@@ -66,7 +66,7 @@ class repository : public wallet::net::base_repository {
         auto req = newRequest();
         req.addPath("estimate/coin-buy");
         req.addParam({"coinToSell", coin_to_sell});
-        req.addParam({"valueToBuy", utils::to_string(mintex::utils::normalize_value(value_to_buy))});
+        req.addParam({"valueToBuy", utils::to_string(minter::utils::normalize_value(value_to_buy))});
         req.addParam({"coinToBuy", coin_to_buy});
 
         return make_task_ptr<base_result<exchange_buy_value>>(std::move(req));
@@ -76,7 +76,7 @@ class repository : public wallet::net::base_repository {
         auto req = newRequest();
         req.addPath("estimate/coin-sell");
         req.addParam({"coinToSell", coin_to_sell});
-        req.addParam({"valueToSell", utils::to_string(mintex::utils::normalize_value(value_to_sell))});
+        req.addParam({"valueToSell", utils::to_string(minter::utils::normalize_value(value_to_sell))});
         req.addParam({"coinToBuy", coin_to_buy});
 
         return make_task_ptr<base_result<exchange_sell_value>>(std::move(req));
@@ -98,7 +98,7 @@ class repository : public wallet::net::base_repository {
         return make_task_ptr<base_result<tx_send_result>>(std::move(req));
     }
 
-    tx_init_data get_tx_init_data(const mintex::address_t &address, bool &error) {
+    tx_init_data get_tx_init_data(const minter::address_t &address, bool &error) {
         using namespace wallet::gate;
 
         error = false;

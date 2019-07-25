@@ -17,7 +17,7 @@
 #include <utility>
 #include <functional>
 #include <boost/program_options.hpp>
-#include <eth/Common.h>
+#include <minter/eth/Common.h>
 #include "wallet/term.h"
 
 
@@ -73,9 +73,13 @@ class coin_validator: public base_validator {
 class amount_validator: public base_validator {
  public:
     amount_validator();
+    amount_validator(bool use_all);
     amount_validator(const std::string &error_message);
     amount_validator(std::string &&error_message);
     bool validate(const std::string &value) override;
+
+ private:
+    bool m_all = false;
 };
 
 class payload_validator: public base_validator {

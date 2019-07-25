@@ -9,9 +9,7 @@
 
 #include "wallet/base_repository.h"
 
-wallet::net::base_repository::base_repository():
-    m_client(std::make_shared<httb::client>())
-    {
+wallet::net::base_repository::base_repository() {
 
 }
 wallet::net::base_repository::~base_repository() {

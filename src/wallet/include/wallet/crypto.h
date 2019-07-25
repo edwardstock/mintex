@@ -11,9 +11,9 @@
 #define MINTEX_CRYPTO_H
 #include <memory>
 #include <sodium.h>
-#include <bip39/utils.h>
+#include <minter/bip39/utils.h>
 #include <aes256.hpp>
-#include "mintex-tx/utils.h"
+#include <minter/tx/utils.h>
 
 template<typename _CharT>
 class sodium_s_alloc {

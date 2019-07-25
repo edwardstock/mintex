@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <eth/Common.h>
+#include <minter/eth/Common.h>
+#include <minter/hash.h>
+#include <minter/address.h>
+#include <minter/public_key.h>
+#include <minter/tx/tx_type.h>
 #include "wallet/explorer/base.h"
-#include "mintex-tx/minter_hash.h"
-#include "mintex-tx/minter_address.h"
-#include "mintex-tx/minter_public_key.h"
-#include "mintex-tx/tx_type.h"
 
 
 
@@ -20,20 +20,20 @@ namespace explorer {
 
 struct transaction_item {
 	dev::bigint txn;
-	mintex::hash_t hash;
+	minter::hash_t hash;
 	dev::bigint nonce;
 	dev::bigint block;
 	std::string timestamp;
 	dev::bigdec18 fee;
-	mintex::tx_type_val type;
+	minter::tx_type_val type;
 	std::string payload;
-	mintex::address_t from;
+	minter::address_t from;
 	std::shared_ptr<wallet::explorer::tx_result> data;
 	static ::nlohmann::json _data_encode(nlohmann::json &j, const ::wallet::explorer::transaction_item& resp);
 	static void _data_decode(const nlohmann::json &j, ::wallet::explorer::transaction_item& resp);
 };
 struct tx_send_result : public wallet::explorer::tx_result  {
-	mintex::address_t to;
+	minter::address_t to;
 	std::string coin;
 	dev::bigdec18 value;
 };
@@ -53,17 +53,17 @@ struct tx_convert_result : public wallet::explorer::tx_result  {
 	dev::bigdec18 minimum_value_to_buy;
 };
 struct tx_declare_candidacy_result : public wallet::explorer::tx_result  {
-	mintex::address_t address;
-	mintex::pubkey_t pub_key;
+	minter::address_t address;
+	minter::pubkey_t pub_key;
 	uint32_t commission;
 	std::string coin;
 	dev::bigdec18 stake;
 };
 struct tx_set_candidate_on_off_result : public wallet::explorer::tx_result  {
-	mintex::pubkey_t pub_key;
+	minter::pubkey_t pub_key;
 };
 struct tx_delegate_unbond_result : public wallet::explorer::tx_result  {
-	mintex::pubkey_t pub_key;
+	minter::pubkey_t pub_key;
 	std::string coin;
 	dev::bigdec18 stake;
 	dev::bigdec18 value;
@@ -72,7 +72,7 @@ struct tx_check_data_result {
 	std::string coin;
 	dev::bigint nonce;
 	dev::bigdec18 value;
-	mintex::address_t sender;
+	minter::address_t sender;
 	dev::bigint due_block;
 };
 struct tx_redeem_check_result : public wallet::explorer::tx_result  {
@@ -85,26 +85,26 @@ struct tx_redeem_check_result : public wallet::explorer::tx_result  {
 struct tx_create_multisig_result : public wallet::explorer::tx_result  {
 	dev::bigint threshold;
 	std::vector<dev::bigint> weights;
-	std::vector<mintex::address_t> addresses;
+	std::vector<minter::address_t> addresses;
 };
 struct tx_multisend_result : public wallet::explorer::tx_result  {
 	std::vector<tx_send_result> items;
 };
 struct tx_edit_candidate_result : public wallet::explorer::tx_result  {
-	mintex::address_t reward_address;
-	mintex::address_t owner_address;
-	mintex::pubkey_t pub_key;
+	minter::address_t reward_address;
+	minter::address_t owner_address;
+	minter::pubkey_t pub_key;
 };
 struct balance_item {
 	std::string coin;
 	dev::bigdec18 amount;
 };
 struct balance_items {
-	mintex::address_t address;
+	minter::address_t address;
 	std::vector<balance_item> balances;
 };
 struct delegated_item : public wallet::explorer::tx_result  {
-	mintex::pubkey_t pub_key;
+	minter::pubkey_t pub_key;
 	std::string coin;
 	dev::bigdec18 value;
 };
@@ -112,20 +112,20 @@ struct reward_item {
 	uint64_t block;
 	std::string role;
 	dev::bigdec18 amount;
-	mintex::address_t address;
-	mintex::pubkey_t validator;
+	minter::address_t address;
+	minter::pubkey_t validator;
 	std::string timestamp;
 };
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::transaction_item& resp) {
 	if(j.find("txn") != j.end() && !j.at("txn").is_null()) j.at("txn").get_to<dev::bigint>(resp.txn);
-	if(j.find("hash") != j.end() && !j.at("hash").is_null()) j.at("hash").get_to<mintex::hash_t>(resp.hash);
+	if(j.find("hash") != j.end() && !j.at("hash").is_null()) j.at("hash").get_to<minter::hash_t>(resp.hash);
 	if(j.find("nonce") != j.end() && !j.at("nonce").is_null()) j.at("nonce").get_to<dev::bigint>(resp.nonce);
 	if(j.find("block") != j.end() && !j.at("block").is_null()) j.at("block").get_to<dev::bigint>(resp.block);
 	if(j.find("timestamp") != j.end() && !j.at("timestamp").is_null()) j.at("timestamp").get_to<std::string>(resp.timestamp);
 	if(j.find("fee") != j.end() && !j.at("fee").is_null()) j.at("fee").get_to<dev::bigdec18>(resp.fee);
-	if(j.find("type") != j.end() && !j.at("type").is_null()) j.at("type").get_to<mintex::tx_type_val>(resp.type);
+	if(j.find("type") != j.end() && !j.at("type").is_null()) j.at("type").get_to<minter::tx_type_val>(resp.type);
 	if(j.find("payload") != j.end() && !j.at("payload").is_null()) j.at("payload").get_to<std::string>(resp.payload);
-	if(j.find("from") != j.end() && !j.at("from").is_null()) j.at("from").get_to<mintex::address_t>(resp.from);
+	if(j.find("from") != j.end() && !j.at("from").is_null()) j.at("from").get_to<minter::address_t>(resp.from);
 	if(j.find("data") != j.end() && !j.at("data").is_null()) ::wallet::explorer::transaction_item::_data_decode(j, resp);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::transaction_item& resp) {
@@ -143,7 +143,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::transaction_ite
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_send_result& resp) {
-	if(j.find("to") != j.end() && !j.at("to").is_null()) j.at("to").get_to<mintex::address_t>(resp.to);
+	if(j.find("to") != j.end() && !j.at("to").is_null()) j.at("to").get_to<minter::address_t>(resp.to);
 	if(j.find("coin") != j.end() && !j.at("coin").is_null()) j.at("coin").get_to<std::string>(resp.coin);
 	if(j.find("value") != j.end() && !j.at("value").is_null()) j.at("value").get_to<dev::bigdec18>(resp.value);
 }
@@ -189,8 +189,8 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_convert_resu
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_declare_candidacy_result& resp) {
-	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<mintex::address_t>(resp.address);
-	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<mintex::pubkey_t>(resp.pub_key);
+	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<minter::address_t>(resp.address);
+	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<minter::pubkey_t>(resp.pub_key);
 	if(j.find("commission") != j.end() && !j.at("commission").is_null()) j.at("commission").get_to<uint32_t>(resp.commission);
 	if(j.find("coin") != j.end() && !j.at("coin").is_null()) j.at("coin").get_to<std::string>(resp.coin);
 	if(j.find("stake") != j.end() && !j.at("stake").is_null()) j.at("stake").get_to<dev::bigdec18>(resp.stake);
@@ -205,7 +205,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_declare_cand
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_set_candidate_on_off_result& resp) {
-	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<mintex::pubkey_t>(resp.pub_key);
+	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<minter::pubkey_t>(resp.pub_key);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_set_candidate_on_off_result& resp) {
 	j = nlohmann::json{
@@ -213,7 +213,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_set_candidat
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_delegate_unbond_result& resp) {
-	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<mintex::pubkey_t>(resp.pub_key);
+	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<minter::pubkey_t>(resp.pub_key);
 	if(j.find("coin") != j.end() && !j.at("coin").is_null()) j.at("coin").get_to<std::string>(resp.coin);
 	if(j.find("stake") != j.end() && !j.at("stake").is_null()) j.at("stake").get_to<dev::bigdec18>(resp.stake);
 	if(j.find("value") != j.end() && !j.at("value").is_null()) j.at("value").get_to<dev::bigdec18>(resp.value);
@@ -230,7 +230,7 @@ inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_check_data
 	if(j.find("coin") != j.end() && !j.at("coin").is_null()) j.at("coin").get_to<std::string>(resp.coin);
 	if(j.find("nonce") != j.end() && !j.at("nonce").is_null()) j.at("nonce").get_to<dev::bigint>(resp.nonce);
 	if(j.find("value") != j.end() && !j.at("value").is_null()) j.at("value").get_to<dev::bigdec18>(resp.value);
-	if(j.find("sender") != j.end() && !j.at("sender").is_null()) j.at("sender").get_to<mintex::address_t>(resp.sender);
+	if(j.find("sender") != j.end() && !j.at("sender").is_null()) j.at("sender").get_to<minter::address_t>(resp.sender);
 	if(j.find("due_block") != j.end() && !j.at("due_block").is_null()) j.at("due_block").get_to<dev::bigint>(resp.due_block);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_check_data_result& resp) {
@@ -261,7 +261,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_redeem_check
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_create_multisig_result& resp) {
 	if(j.find("threshold") != j.end() && !j.at("threshold").is_null()) j.at("threshold").get_to<dev::bigint>(resp.threshold);
 	if(j.find("weights") != j.end() && !j.at("weights").is_null()) j.at("weights").get_to<std::vector<dev::bigint>>(resp.weights);
-	if(j.find("addresses") != j.end() && !j.at("addresses").is_null()) j.at("addresses").get_to<std::vector<mintex::address_t>>(resp.addresses);
+	if(j.find("addresses") != j.end() && !j.at("addresses").is_null()) j.at("addresses").get_to<std::vector<minter::address_t>>(resp.addresses);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_create_multisig_result& resp) {
 	j = nlohmann::json{
@@ -279,9 +279,9 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_multisend_re
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::tx_edit_candidate_result& resp) {
-	if(j.find("reward_address") != j.end() && !j.at("reward_address").is_null()) j.at("reward_address").get_to<mintex::address_t>(resp.reward_address);
-	if(j.find("owner_address") != j.end() && !j.at("owner_address").is_null()) j.at("owner_address").get_to<mintex::address_t>(resp.owner_address);
-	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<mintex::pubkey_t>(resp.pub_key);
+	if(j.find("reward_address") != j.end() && !j.at("reward_address").is_null()) j.at("reward_address").get_to<minter::address_t>(resp.reward_address);
+	if(j.find("owner_address") != j.end() && !j.at("owner_address").is_null()) j.at("owner_address").get_to<minter::address_t>(resp.owner_address);
+	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<minter::pubkey_t>(resp.pub_key);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::tx_edit_candidate_result& resp) {
 	j = nlohmann::json{
@@ -301,7 +301,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::balance_item& r
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::balance_items& resp) {
-	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<mintex::address_t>(resp.address);
+	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<minter::address_t>(resp.address);
 	if(j.find("balances") != j.end() && !j.at("balances").is_null()) j.at("balances").get_to<std::vector<balance_item>>(resp.balances);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::balance_items& resp) {
@@ -311,7 +311,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::explorer::balance_items& 
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::explorer::delegated_item& resp) {
-	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<mintex::pubkey_t>(resp.pub_key);
+	if(j.find("pub_key") != j.end() && !j.at("pub_key").is_null()) j.at("pub_key").get_to<minter::pubkey_t>(resp.pub_key);
 	if(j.find("coin") != j.end() && !j.at("coin").is_null()) j.at("coin").get_to<std::string>(resp.coin);
 	if(j.find("value") != j.end() && !j.at("value").is_null()) j.at("value").get_to<dev::bigdec18>(resp.value);
 }
@@ -326,8 +326,8 @@ inline void from_json(const nlohmann::json& j, ::wallet::explorer::reward_item& 
 	if(j.find("block") != j.end() && !j.at("block").is_null()) j.at("block").get_to<uint64_t>(resp.block);
 	if(j.find("role") != j.end() && !j.at("role").is_null()) j.at("role").get_to<std::string>(resp.role);
 	if(j.find("amount") != j.end() && !j.at("amount").is_null()) j.at("amount").get_to<dev::bigdec18>(resp.amount);
-	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<mintex::address_t>(resp.address);
-	if(j.find("validator") != j.end() && !j.at("validator").is_null()) j.at("validator").get_to<mintex::pubkey_t>(resp.validator);
+	if(j.find("address") != j.end() && !j.at("address").is_null()) j.at("address").get_to<minter::address_t>(resp.address);
+	if(j.find("validator") != j.end() && !j.at("validator").is_null()) j.at("validator").get_to<minter::pubkey_t>(resp.validator);
 	if(j.find("timestamp") != j.end() && !j.at("timestamp").is_null()) j.at("timestamp").get_to<std::string>(resp.timestamp);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::explorer::reward_item& resp) {

@@ -7,12 +7,12 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <eth/Common.h>
+#include <minter/eth/Common.h>
 #include <nlohmann/json.hpp>
-#include "mintex-tx/utils.h"
-#include "mintex-tx/minter_address.h"
-#include "mintex-tx/minter_public_key.h"
-#include "mintex-tx/minter_hash.h"
+#include <minter/tx/utils.h>
+#include <minter/address.h>
+#include <minter/public_key.h>
+#include <minter/hash.h>
 
 #ifndef MINTEX_RESP_GEN_H
 #define MINTEX_RESP_GEN_H
@@ -22,7 +22,7 @@ namespace nlohmann {
 template <>
 struct adl_serializer<dev::bigdec18> {
   static inline void to_json(json& j, const dev::bigdec18& p) {
-      j = mintex::utils::to_string(p);
+      j = minter::utils::to_string(p);
   }
 
   static inline void from_json(const json& j, dev::bigdec18& p) {
@@ -39,7 +39,7 @@ struct adl_serializer<dev::bigdec18> {
 template <>
 struct adl_serializer<dev::bigint> {
   static inline void to_json(json& j, const dev::bigint& p) {
-      j = mintex::utils::to_string(p);
+      j = minter::utils::to_string(p);
   }
 
   static inline void from_json(const json& j, dev::bigint& p) {
@@ -55,46 +55,46 @@ struct adl_serializer<dev::bigint> {
 };
 
 template <>
-struct adl_serializer<mintex::address_t> {
-  static inline void to_json(json& j, const mintex::address_t& val) {
+struct adl_serializer<minter::address_t> {
+  static inline void to_json(json& j, const minter::address_t& val) {
       j = val.to_string();
   }
 
-  static inline void from_json(const json& j, mintex::address_t& val) {
-      val = mintex::address_t(j.get<std::string>());
+  static inline void from_json(const json& j, minter::address_t& val) {
+      val = minter::address_t(j.get<std::string>());
   }
 };
 
 template <>
-struct adl_serializer<mintex::pubkey_t > {
-  static inline void to_json(json& j, const mintex::pubkey_t& val) {
+struct adl_serializer<minter::pubkey_t > {
+  static inline void to_json(json& j, const minter::pubkey_t& val) {
       j = val.to_string();
   }
 
-  static inline void from_json(const json& j, mintex::pubkey_t& val) {
-      val = mintex::pubkey_t(j.get<std::string>());
+  static inline void from_json(const json& j, minter::pubkey_t& val) {
+      val = minter::pubkey_t(j.get<std::string>());
   }
 };
 
 template <>
-struct adl_serializer<mintex::privkey_t > {
-  static inline void to_json(json& j, const mintex::privkey_t& val) {
+struct adl_serializer<minter::privkey_t > {
+  static inline void to_json(json& j, const minter::privkey_t& val) {
       j = val.toHex();
   }
 
-  static inline void from_json(const json& j, mintex::privkey_t& val) {
-      val = mintex::privkey_t(j.get<std::string>().c_str());
+  static inline void from_json(const json& j, minter::privkey_t& val) {
+      val = minter::privkey_t(j.get<std::string>().c_str());
   }
 };
 
 template <>
-struct adl_serializer<mintex::hash_t > {
-  static inline void to_json(json& j, const mintex::hash_t& val) {
+struct adl_serializer<minter::hash_t > {
+  static inline void to_json(json& j, const minter::hash_t& val) {
       j = val.to_string();
   }
 
-  static inline void from_json(const json& j, mintex::hash_t& val) {
-      val = mintex::hash_t(j.get<std::string>());
+  static inline void from_json(const json& j, minter::hash_t& val) {
+      val = minter::hash_t(j.get<std::string>());
   }
 };
 

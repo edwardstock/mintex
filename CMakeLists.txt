@@ -9,7 +9,7 @@ project(mintex
 set(CMAKE_CXX_STANDARD 14)
 set(RP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(RP_BD ${CMAKE_BINARY_DIR})
-set(MINTER_CHAIN "mainnet")
+set(MINTER_CHAIN "mainnet" CACHE STRING "Chain ID")
 
 if (MINTER_CHAIN STREQUAL "mainnet")
 	message(STATUS "Network: ${MINTER_CHAIN}")
@@ -31,6 +31,7 @@ include(ConanInit)
 
 add_conan_remote(bincrafters https://api.bintray.com/conan/bincrafters/public-conan)
 add_conan_remote(scatter https://api.bintray.com/conan/edwardstock/scatter)
+add_conan_remote(edwardstock https://api.bintray.com/conan/edwardstock/conan-public)
 conan_init()
 
 
@@ -59,7 +60,6 @@ else ()
 	set(CMAKE_CXX_LINKER_FLAGS "")
 endif ()
 
-add_subdirectory(src/tx)
 add_subdirectory(src/wallet)
 add_subdirectory(src/resp_generator)
 

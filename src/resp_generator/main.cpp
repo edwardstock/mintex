@@ -19,6 +19,7 @@
 #include <nlohmann/json.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
+#include <boost/system/error_code.hpp>
 #include <fmt/format.h>
 
 

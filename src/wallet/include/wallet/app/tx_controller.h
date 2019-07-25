@@ -32,6 +32,7 @@ class tx_controller : public wallet::command_controller {
     ACTION_DECLARE(sell);
     ACTION_DECLARE(delegate);
     ACTION_DECLARE(unbond);
+    ACTION_DECLARE(autodelegate);
 //    ACTION_DECLARE(dc);
 //    ACTION_DECLARE(candidate);
 
@@ -39,7 +40,7 @@ class tx_controller : public wallet::command_controller {
     std::unique_ptr<wallet::secret_storage> m_storage;
 
     static void print_error_tx(const httb::response &resp, const wallet::gate::error_result &error);
-    static void print_success_tx(const mintex::hash_t &hash);
+    static void print_success_tx(const minter::hash_t &hash);
 
 
 };

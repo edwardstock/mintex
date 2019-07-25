@@ -10,8 +10,9 @@
 #ifndef MINTEX_SIMPLE_STORAGE_H
 #define MINTEX_SIMPLE_STORAGE_H
 
+#include <map>
 #include <nlohmann/json.hpp>
-#include "mintex-tx/minter_public_key.h"
+#include <minter/public_key.h>
 #include "wallet/resp_gen.h"
 #include "wallet/kv_storage.h"
 
@@ -19,27 +20,24 @@ namespace wallet {
 
 struct validator_data {
   std::string name;
-  mintex::pubkey_t pubkey;
+  minter::pubkey_t pubkey;
 };
 
-void from_json(const nlohmann::json &j, validator_data &v) {
-    JSON_GET(j, "name", std::string, v.name);
-    JSON_GET(j, "pubkey", mintex::pubkey_t , v.pubkey);
-}
-
-void to_json(nlohmann::json &j, const validator_data &v) {
-    j = nlohmann::json {
-        {"name", v.name},
-        {"pubkey", v.pubkey.to_string()}
-    };
-}
+void from_json(const nlohmann::json &j, validator_data &v);
+void to_json(nlohmann::json &j, const validator_data &v);
 
 class simple_storage {
  public:
+    simple_storage() = default;
+    simple_storage(wallet::db::kv_storage &&storage);
     void init();
 
-    void add_validator(const std::string &name, const validator_data& data);
-    void remove_validator(const std::string &name);
+    void set(const std::string &name, const nlohmann::json &j);
+    void remove(const std::string &name);
+    bool exists(const std::string &name) const;
+    nlohmann::json get(const std::string &name) const;
+
+    const wallet::db::kv_storage& get_storage() const;
  private:
     wallet::db::kv_storage m_storage;
 };

@@ -16,7 +16,7 @@
 void wallet::explorer::transaction_item::_data_decode(const nlohmann::json &j,
                                                       ::wallet::explorer::transaction_item &resp) {
 
-    using namespace mintex;
+    using namespace minter;
 
     switch (resp.type) {
         case tx_type_val::send_coin: {

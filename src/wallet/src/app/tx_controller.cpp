@@ -10,8 +10,7 @@
 #include <unordered_map>
 #include <toolboxpp.hpp>
 #include <fort.hpp>
-#include "mintex-tx/tx.h"
-#include "mintex-tx/tx_builder.h"
+#include <minter/tx.hpp>
 #include "wallet/app/tx_controller.h"
 #include "wallet/explorer/repository.h"
 #include "wallet/gate/repository.h"
@@ -74,7 +73,7 @@ void wallet::cmd::tx_controller::action_send_options(boost::program_options::opt
 }
 
 void wallet::cmd::tx_controller::action_send(const boost::program_options::variables_map &options) {
-    using namespace mintex;
+    using namespace minter;
     using namespace toolboxpp::console;
     using namespace wallet::term;
     using namespace wallet;
@@ -119,9 +118,6 @@ void wallet::cmd::tx_controller::action_send(const boost::program_options::varia
     progress_indeterminate p;
     p.start();
 
-    dev::bigint nonce;
-    dev::bigint gas = dev::bigint("1");
-
     repository data_repo;
     tx_init_data init_data = data_repo.get_tx_init_data(secret_data.get_address(), error);
 
@@ -130,10 +126,10 @@ void wallet::cmd::tx_controller::action_send(const boost::program_options::varia
     }
 
     auto tx_builder = new_tx();
-    tx_builder->set_nonce(nonce);
-    tx_builder->set_gas_price(gas);
+    tx_builder->set_nonce(init_data.nonce);
+    tx_builder->set_gas_price(init_data.gas);
     tx_builder->set_gas_coin(gas_coin);
-    tx_builder->set_chain_id(mintex::chain_id_str_map.at(std::string(MINTER_CHAIN)));
+    tx_builder->set_chain_id(minter::chain_id_str_map.at(std::string(MINTER_CHAIN)));
     tx_builder->set_payload(std::move(payload));
     auto data = tx_builder->tx_send_coin();
     data->set_to(address);
@@ -143,7 +139,7 @@ void wallet::cmd::tx_controller::action_send(const boost::program_options::varia
     auto tx = data->build();
     auto signedTx = tx->sign_single(secret_data.priv_key);
     data_repo.send_tx(signedTx)
-             ->success([&p, &gas, &nonce](base_result<tx_send_result> result) {
+             ->success([&p, &init_data](base_result<tx_send_result> result) {
                p.stop();
                print_success_tx(result.data.hash);
              })
@@ -152,7 +148,7 @@ void wallet::cmd::tx_controller::action_send(const boost::program_options::varia
                print_error_tx(resp, result.error);
              })
              ->execute()
-             ->handle().wait();
+             ->handle().run();
 
 }
 void wallet::cmd::tx_controller::action_buy_options(boost::program_options::options_description &options) {
@@ -166,7 +162,7 @@ void wallet::cmd::tx_controller::action_buy_options(boost::program_options::opti
                ;
 }
 void wallet::cmd::tx_controller::action_buy(const boost::program_options::variables_map &options) {
-    using namespace mintex;
+    using namespace minter;
     using namespace toolboxpp::console;
     using namespace wallet::term;
     using namespace wallet::gate;
@@ -245,7 +241,7 @@ void wallet::cmd::tx_controller::action_buy(const boost::program_options::variab
     tx_builder->set_nonce(init_data.nonce);
     tx_builder->set_gas_price(init_data.gas);
     tx_builder->set_gas_coin(gas_coin);
-    tx_builder->set_chain_id(mintex::chain_id_str_map.at(std::string(MINTER_CHAIN)));
+    tx_builder->set_chain_id(minter::chain_id_str_map.at(std::string(MINTER_CHAIN)));
     tx_builder->set_payload(std::move(payload));
     auto data = tx_builder->tx_buy_coin();
     data->set_coin_to_buy(to_coin);
@@ -266,7 +262,7 @@ void wallet::cmd::tx_controller::action_buy(const boost::program_options::variab
                print_error_tx(resp, result.error);
              })
              ->execute()
-             ->handle().wait();
+             ->handle().run();
 }
 
 void wallet::cmd::tx_controller::action_sell_options(boost::program_options::options_description &options) {
@@ -283,7 +279,7 @@ void wallet::cmd::tx_controller::action_sell_options(boost::program_options::opt
 }
 
 void wallet::cmd::tx_controller::action_sell(const boost::program_options::variables_map &options) {
-    using namespace mintex;
+    using namespace minter;
     using namespace toolboxpp::console;
     using namespace wallet::term;
     using namespace wallet::gate;
@@ -339,7 +335,7 @@ void wallet::cmd::tx_controller::action_sell(const boost::program_options::varia
                                       }
                                     });
 
-        balance_task->execute()->handle().wait();
+        balance_task->execute()->handle().run();
         p.stop();
 
         if (error) {
@@ -398,9 +394,9 @@ void wallet::cmd::tx_controller::action_sell(const boost::program_options::varia
     tx_builder->set_nonce(init_data.nonce);
     tx_builder->set_gas_price(init_data.gas);
     tx_builder->set_gas_coin(gas_coin);
-    tx_builder->set_chain_id(mintex::chain_id_str_map.at(std::string(MINTER_CHAIN)));
+    tx_builder->set_chain_id(minter::chain_id_str_map.at(std::string(MINTER_CHAIN)));
     tx_builder->set_payload(std::move(payload));
-    std::shared_ptr<mintex::tx> tx;
+    std::shared_ptr<minter::tx> tx;
     if (sell_all) {
         auto data = tx_builder->tx_sell_all_coins();
         data->set_coin_to_buy(to_coin);
@@ -428,7 +424,7 @@ void wallet::cmd::tx_controller::action_sell(const boost::program_options::varia
                print_error_tx(resp, result.error);
              })
              ->execute()
-             ->handle().wait();
+             ->handle().run();
 }
 void wallet::cmd::tx_controller::action_delegate_options(boost::program_options::options_description &options) {
     options.add_options()
@@ -441,7 +437,7 @@ void wallet::cmd::tx_controller::action_delegate_options(boost::program_options:
                ;
 }
 void wallet::cmd::tx_controller::action_delegate(const boost::program_options::variables_map &options) {
-    using namespace mintex;
+    using namespace minter;
     using namespace toolboxpp::console;
     using namespace wallet::term;
     using namespace wallet::gate;
@@ -459,7 +455,7 @@ void wallet::cmd::tx_controller::action_delegate(const boost::program_options::v
 
     repository data_repo;
 
-    mintex::pubkey_t pubkey = mintex::pubkey_t(options.at("pubkey").as<std::string>());
+    minter::pubkey_t pubkey = minter::pubkey_t(options.at("pubkey").as<std::string>());
     dev::bigdec18 stake = dev::bigdec18(options.at("stake").as<std::string>());
     std::string payload = options.at("payload").as<std::string>();
     std::string coin = options.at("coin").as<std::string>();
@@ -501,7 +497,7 @@ void wallet::cmd::tx_controller::action_delegate(const boost::program_options::v
     tx_builder->set_nonce(init_data.nonce);
     tx_builder->set_gas_price(init_data.gas);
     tx_builder->set_gas_coin(gas_coin);
-    tx_builder->set_chain_id(mintex::chain_id_str_map.at(std::string(MINTER_CHAIN)));
+    tx_builder->set_chain_id(minter::chain_id_str_map.at(std::string(MINTER_CHAIN)));
     tx_builder->set_payload(std::move(payload));
     auto data = tx_builder->tx_delegate();
     data->set_pub_key(pubkey);
@@ -521,7 +517,7 @@ void wallet::cmd::tx_controller::action_delegate(const boost::program_options::v
                print_error_tx(resp, result.error);
              })
              ->execute()
-             ->handle().wait();
+             ->handle().run();
 }
 void wallet::cmd::tx_controller::action_unbond_options(boost::program_options::options_description &options) {
     options.add_options()
@@ -534,7 +530,7 @@ void wallet::cmd::tx_controller::action_unbond_options(boost::program_options::o
                ;
 }
 void wallet::cmd::tx_controller::action_unbond(const boost::program_options::variables_map &options) {
-    using namespace mintex;
+    using namespace minter;
     using namespace toolboxpp::console;
     using namespace wallet::term;
     using namespace wallet::gate;
@@ -552,7 +548,7 @@ void wallet::cmd::tx_controller::action_unbond(const boost::program_options::var
 
     repository data_repo;
 
-    mintex::pubkey_t pubkey = mintex::pubkey_t(options.at("pubkey").as<std::string>());
+    minter::pubkey_t pubkey = minter::pubkey_t(options.at("pubkey").as<std::string>());
     dev::bigdec18 stake = dev::bigdec18(options.at("stake").as<std::string>());
     std::string payload = options.at("payload").as<std::string>();
     std::string coin = options.at("coin").as<std::string>();
@@ -594,7 +590,7 @@ void wallet::cmd::tx_controller::action_unbond(const boost::program_options::var
     tx_builder->set_nonce(init_data.nonce);
     tx_builder->set_gas_price(init_data.gas);
     tx_builder->set_gas_coin(gas_coin);
-    tx_builder->set_chain_id(mintex::chain_id_str_map.at(std::string(MINTER_CHAIN)));
+    tx_builder->set_chain_id(minter::chain_id_str_map.at(std::string(MINTER_CHAIN)));
     tx_builder->set_payload(std::move(payload));
     auto data = tx_builder->tx_unbond();
     data->set_pub_key(pubkey);
@@ -614,8 +610,140 @@ void wallet::cmd::tx_controller::action_unbond(const boost::program_options::var
                print_error_tx(resp, result.error);
              })
              ->execute()
-             ->handle().wait();
+             ->handle().run();
 
+}
+
+#include "wallet/prompt_manager.h"
+
+void wallet::cmd::tx_controller::action_autodelegate_options(boost::program_options::options_description &options) {
+    options.add_options()
+               ("index,i", po::value<size_t>()->default_value(0), "Account index")
+               ("gas-coin", po::value<std::string>()->default_value(std::string(MINTER_COIN)), "Commission coin")
+               ("payload", po::value<std::string>()->default_value(""), "Tx payload")
+               ("buy-coin", po::value<std::string>()->default_value(std::string(MINTER_COIN)), "Buy coin and delegate it, if it's not the BIP");
+}
+
+void wallet::cmd::tx_controller::action_autodelegate(const boost::program_options::variables_map &options) {
+    using namespace minter;
+    using namespace toolboxpp::console;
+    using namespace wallet::term;
+    using namespace wallet::gate;
+
+    wallet::options_validator validator(&options);
+    validator.add_option("payload", new wallet::payload_validator)
+             ->add_option("coin", new wallet::coin_validator)
+             ->add_option("gas-coin", new wallet::coin_validator);
+
+    if (!validator.validate()) {
+        return;
+    }
+
+    repository data_repo;
+    wallet::explorer::repository explorer_repo;
+
+    wallet::prompt_manager pm;
+    pm.add_field("pubkey", new wallet::pubkey_validator);
+    pm.add_field("threshold", new wallet::amount_validator);
+    pm.add_field("coin", new wallet::coin_validator);
+    pm.prompt();
+
+    minter::pubkey_t pubkey = minter::pubkey_t(pm.get("pubkey"));
+    dev::bigdec18 threshold = dev::bigdec18(pm.get("threshold"));
+    std::string coin = pm.get("coin");
+    std::string payload = options.at("payload").as<std::string>();
+    std::string gas_coin = options.at("gas-coin").as<std::string>();
+    size_t index = options.at("index").as<size_t>();
+
+    bool error = false;
+
+    auto secret_data = m_storage->get_secret(index);
+
+    std::cout << std::setprecision(std::numeric_limits<boost::multiprecision::cpp_dec_float<18>>::max_digits10);
+    std::cout << "You are about to autodelegate:\n";
+    fort::table table;
+
+    table << "Account" << secret_data.get_address().to_string() << fort::endr;
+    table << "Validator" << pubkey.to_string() << fort::endr;
+    table << "Threshold" << fmt::format("{0} {1}", to_string(threshold), coin) << fort::endr;
+    table << "Gas Coin" << gas_coin << fort::endr;
+    table << "Payload" << payload << fort::endr;
+    std::cout << table.to_string() << std::endl;
+
+    if (!confirm("Is it OK?", true)) {
+        std::cout << "Operation canceled" << "\n";
+        return;
+    }
+
+    std::cout << "Process started..." << std::endl;
+
+    bool running = true;
+
+    while (running) {
+        auto balance_task = explorer_repo.get_balance(secret_data.get_address());
+        bool execute = false;
+        dev::bigdec18 amount;
+
+        balance_task
+            ->error([](httb::response resp, wallet::explorer::base_result<wallet::explorer::balance_items> result) { })
+            ->success([&execute, &threshold, &amount, &coin](wallet::explorer::base_result<wallet::explorer::balance_items> result) {
+              for (const auto &balance: result.data.balances) {
+                  if (toolboxpp::strings::equalsIgnoreCase(coin, balance.coin)) {
+                      if ((balance.amount + tx_delegate_type::get_fee()) >= threshold) {
+                          execute = true;
+                          amount = balance.amount;
+                      }
+                  }
+              }
+            })
+            ->execute()->handle().run();
+
+        if (!execute) {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            continue;
+        }
+        execute = false;
+
+        tx_init_data init_data = data_repo.get_tx_init_data(secret_data.get_address(), error);
+
+        if (error) {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            continue;
+        }
+
+        auto tx_builder = new_tx();
+        tx_builder->set_nonce(init_data.nonce);
+        tx_builder->set_gas_price(init_data.gas);
+        tx_builder->set_gas_coin(gas_coin);
+        tx_builder->set_chain_id(minter::chain_id_str_map.at(std::string(MINTER_CHAIN)));
+        tx_builder->set_payload(std::move(payload));
+        auto data = tx_builder->tx_delegate();
+        data->set_pub_key(pubkey);
+
+        amount = amount - tx_delegate_type::get_fee(init_data.gas);
+
+        data->set_stake(amount);
+        data->set_coin(coin);
+
+        auto tx = data->build();
+        auto signedTx = secret_data.sign(tx);
+
+        std::cout << "Delegating " << to_string(amount) << "... ";
+
+        data_repo.send_tx(signedTx)
+                 ->success([&init_data](base_result<tx_send_result> result) {
+                   std::cout << " OK!" << std::endl;
+                 })
+                 ->error([](httb::response resp, base_result<tx_send_result> result) {
+                   std::cout << " ERROR!\n";
+                   print_error_tx(resp, result.error);
+                 })
+                 ->execute()
+                 ->handle().run();
+
+        // wait for next block
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
 }
 
 
@@ -628,7 +756,7 @@ void wallet::cmd::tx_controller::print_error_tx(const httb::response &resp, cons
     }
 }
 
-void wallet::cmd::tx_controller::print_success_tx(const mintex::hash_t &hash) {
+void wallet::cmd::tx_controller::print_success_tx(const minter::hash_t &hash) {
     std::cout << rang::fgB::green << "Tx successfully sent!" << rang::fg::reset << std::endl;
     std::cout << rang::fgB::green
               << std::string(MINTER_EXPLORER) + "transactions/" + hash.to_string()

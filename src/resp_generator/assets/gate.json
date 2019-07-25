@@ -3,12 +3,12 @@
     "<string>",
     "<vector>",
     "<nlohmann/json.hpp>",
-    "<eth/Common.h>",
-    "wallet/gate/base.h",
-    "mintex-tx/minter_hash.h",
-    "mintex-tx/minter_address.h",
-    "mintex-tx/minter_public_key.h",
-    "mintex-tx/tx_type.h"
+    "<minter/eth/Common.h>",
+    "<minter/hash.h>",
+    "<minter/address.h>",
+    "<minter/public_key.h>",
+    "<minter/tx/tx_type.h>",
+    "wallet/gate/base.h"
   ],
   "responses": [
     {
@@ -46,7 +46,7 @@
     {
       "name": "tx_send_result",
       "fields": [
-        ["mintex::hash_t", "hash"]
+        ["minter::hash_t", "hash"]
       ]
     }
   ]

@@ -75,8 +75,9 @@ wallet::coin_validator::coin_validator(std::string &&error_message) : base_valid
 bool wallet::coin_validator::validate(const std::string &value) {
     return toolboxpp::strings::hasRegex(COIN_PATTERN, value);
 }
-wallet::amount_validator::amount_validator() : base_validator() {
-
+wallet::amount_validator::amount_validator() : base_validator(), m_all(false) {
+}
+wallet::amount_validator::amount_validator(bool use_all): base_validator(), m_all(use_all) {
 }
 wallet::amount_validator::amount_validator(const std::string &error_message) : base_validator(error_message) {
 
@@ -85,6 +86,9 @@ wallet::amount_validator::amount_validator(std::string &&error_message) : base_v
 
 }
 bool wallet::amount_validator::validate(const std::string &value) {
+    if(m_all && toolboxpp::strings::equalsIgnoreCase(value, "all")) {
+        return true;
+    }
     if (!toolboxpp::strings::hasRegex(DECIMAL_PATTERN, value)) {
         error_message = "Invalid number format";
         return false;

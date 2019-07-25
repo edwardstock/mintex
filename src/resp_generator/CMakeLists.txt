@@ -10,6 +10,5 @@ target_compile_definitions(resp_generator PUBLIC RES_PATH=\"${CMAKE_CURRENT_SOUR
 target_link_libraries(resp_generator nlohmann_json)
 target_link_libraries(resp_generator CONAN_PKG::fmt)
 target_link_libraries(resp_generator CONAN_PKG::toolboxpp)
-target_link_libraries(resp_generator CONAN_PKG::boost_filesystem)
-target_link_libraries(resp_generator CONAN_PKG::boost_program_options)
+target_link_libraries(resp_generator CONAN_PKG::boost)
 target_include_directories(resp_generator PUBLIC ${RP_DIR}/libs/json/include)

@@ -1,0 +1,52 @@
+{
+  "includes": [
+    "<string>",
+    "<vector>",
+    "<nlohmann/json.hpp>",
+    "<minter/eth/Common.h>",
+    "<minter/hash.h>",
+    "<minter/address.h>",
+    "<minter/tx/tx_type.h>",
+    "wallet/liquidity/base.h"
+  ],
+  "responses": [
+    {
+      "name": "bip_price",
+      "fields": [
+        ["int", "price"],
+        ["std::string", "next_update"],
+        ["float", "delta"]
+      ]
+    },
+    {
+      "name": "sell_result",
+      "fields": [
+        ["minter::address_t", "address"],
+        ["std::string", "tag"]
+      ]
+    },
+    {
+      "name": "buy_tag_info",
+      "fields": [
+        ["minter::address_t", "minter_address", "address"],
+        ["dev::bigint", "btc_price"],
+        ["dev::bigint", "price", "bip_price"],
+        ["std::string", "coin"],
+        ["dev::bigint", "amount"]
+      ]
+    },
+    {
+      "name": "buy_btc_address",
+      "fields": [
+        ["std::string", "address"]
+      ]
+    },
+    {
+      "name": "buy_status",
+      "fields": [
+        ["std::string", "coin"],
+        ["dev::bigint", "will_receive", "amount"]
+      ]
+    }
+  ]
+}

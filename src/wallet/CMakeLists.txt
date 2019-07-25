@@ -17,23 +17,32 @@ add_library(aes256 STATIC ${AES_SOURCES})
 target_compile_options(aes256 PRIVATE "-Wno-deprecated-register")
 
 set(INCLUDE_FILES
-    include/wallet/base_repository.h
-    include/wallet/explorer/repository.h
-    include/wallet/explorer/base.h
     include/wallet/resp_gen.h
-    include/wallet/explorer/results.hpp
     include/wallet/app/app.h
     include/wallet/app/init_controller.h
     include/wallet/app/secret_controller.h
     include/wallet/app/account_controller.h
     include/wallet/app/tx_controller.h
     include/wallet/app/settings_controller.h
+    include/wallet/base_repository.h
+    include/wallet/explorer/repository.h
+    include/wallet/explorer/base.h
+    include/wallet/explorer/results.hpp
     include/wallet/term.h
     include/wallet/kv_storage.h
     include/wallet/data/secret_storage.h
     include/wallet/settings.h
     include/wallet/crypto.h
-    include/wallet/except.h include/wallet/gate/repository.h include/wallet/gate/base.h include/wallet/gate/exchange_calculator.h include/wallet/data_validator.h include/wallet/data/simple_storage.h)
+    include/wallet/except.h
+    include/wallet/gate/repository.h
+    include/wallet/gate/base.h
+    include/wallet/gate/exchange_calculator.h
+    include/wallet/liquidity/base.h
+    include/wallet/liquidity/results.hpp
+    include/wallet/liquidity/repository.h
+    include/wallet/data_validator.h
+    include/wallet/data/simple_storage.h
+    include/wallet/data/address_book.h)
 
 set(SOURCE_FILES
     ${INCLUDE_FILES}
@@ -49,7 +58,12 @@ set(SOURCE_FILES
     src/settings.cpp
     src/data/secret_storage.cpp
     src/crypto.cpp
-    src/data_validator.cpp)
+    src/data_validator.cpp
+    src/data/simple_storage.cpp
+    src/data/address_book.cpp
+    src/kv_storage.cpp
+    src/prompt_manager.cpp
+    )
 
 option(JSON_BuildTests "" OFF)
 option(JSON_MultipleHeaders "" OFF)
@@ -58,15 +72,17 @@ option(ENABLE_SHARED OFF)
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES})
 
 if (MINTER_CHAIN STREQUAL "mainnet")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER_API=\"https://explorer-api.minter.network/api/v1/\")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER=\"https://explorer.minter.network/\")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_GATE_API=\"https://gate.apps.minter.network/api/v1/\")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_COIN=\"BIP\")
+	add_definitions(-DMINTER_EXPLORER_API=\"https://explorer-api.minter.network/api/v1/\")
+	add_definitions(-DMINTER_EXPLORER=\"https://explorer.minter.network/\")
+	add_definitions(-DMINTER_GATE_API=\"https://gate.apps.minter.network/api/v1/\")
+	add_definitions(-DMINTER_LP_API=\"https://api.bip.dev/api/\")
+	add_definitions(-DMINTER_COIN=\"BIP\")
 elseif (MINTER_CHAIN STREQUAL "testnet")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER_API=\"https://explorer-api.minter.network/api/v1/\")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_EXPLORER=\"https://testnet.explorer.minter.network/\")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_GATE_API=\"https://gate.apps.minter.network/api/v1/\")
-	target_compile_definitions(${PROJECT_NAME} PUBLIC MINTER_COIN=\"MNT\")
+	add_definitions(-DMINTER_EXPLORER_API=\"https://explorer-api.minter.network/api/v1/\")
+	add_definitions(-DMINTER_EXPLORER=\"https://testnet.explorer.minter.network/\")
+	add_definitions(-DMINTER_GATE_API=\"https://gate.minter.network/api/v1/\")
+	add_definitions(-DMINTER_LP_API=\"https://api.bip.dev/api/\")
+	add_definitions(-DMINTER_COIN=\"MNT\")
 endif ()
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC MINTEX_VERSION=\"${CMAKE_PROJECT_VERSION}\")
@@ -79,17 +95,17 @@ add_subdirectory(${RP_DIR}/libs/libfort ${CMAKE_BINARY_DIR}/libfort EXCLUDE_FROM
 
 
 target_link_libraries(${PROJECT_NAME} nlohmann_json)
-target_link_libraries(${PROJECT_NAME} mintex_tx)
+target_link_libraries(${PROJECT_NAME} CONAN_PKG::minter_tx)
 target_link_libraries(${PROJECT_NAME} CONAN_PKG::httb)
-target_link_libraries(${PROJECT_NAME} CONAN_PKG::boost_program_options)
-target_link_libraries(${PROJECT_NAME} CONAN_PKG::boost_filesystem)
+target_link_libraries(${PROJECT_NAME} CONAN_PKG::boost)
 target_link_libraries(${PROJECT_NAME} CONAN_PKG::fmt)
 target_link_libraries(${PROJECT_NAME} CONAN_PKG::libsodium)
+target_link_libraries(${PROJECT_NAME} CONAN_PKG::bip39)
 target_link_libraries(${PROJECT_NAME} leveldb)
-target_link_libraries(${PROJECT_NAME} devcore)
 target_link_libraries(${PROJECT_NAME} rang)
 target_link_libraries(${PROJECT_NAME} aes256)
 target_link_libraries(${PROJECT_NAME} fort_dev)
+
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${RP_DIR}/libs/json/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${RP_DIR}/libs/leveldb/include)
@@ -113,23 +129,23 @@ if (WITH_TEST)
 	set(TEST_SOURCES
 	    ${SOURCE_FILES}
 	    tests/transaction_item_deser_test.cpp
-	    tests/secret_storage_test.cpp)
+	    tests/secret_storage_test.cpp tests/address_book_test.cpp)
 
 	add_executable(${PROJECT_NAME_TEST} ${TEST_SOURCES})
 	target_compile_definitions(${PROJECT_NAME_TEST} PUBLIC MINTEX_VERSION=\"${CMAKE_PROJECT_VERSION}\")
 	target_compile_options(${PROJECT_NAME_TEST} PUBLIC -Wno-unused-parameter)
 
 	target_link_libraries(${PROJECT_NAME_TEST} nlohmann_json)
-	target_link_libraries(${PROJECT_NAME_TEST} mintex_tx)
+	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::minter_tx)
 	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::httb)
-	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::boost_program_options)
-	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::boost_filesystem)
+	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::boost)
 	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::fmt)
 	target_link_libraries(${PROJECT_NAME_TEST} CONAN_PKG::libsodium)
 	target_link_libraries(${PROJECT_NAME_TEST} leveldb)
 	target_link_libraries(${PROJECT_NAME_TEST} devcore)
 	target_link_libraries(${PROJECT_NAME_TEST} rang)
 	target_link_libraries(${PROJECT_NAME_TEST} aes256)
+	target_link_libraries(${PROJECT_NAME_TEST} fort_dev)
 
 	target_include_directories(${PROJECT_NAME_TEST} PUBLIC ${RP_DIR}/libs/json/include)
 	target_include_directories(${PROJECT_NAME_TEST} PUBLIC ${RP_DIR}/libs/leveldb/include)

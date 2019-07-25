@@ -21,6 +21,7 @@
 #include <future>
 #include <toolboxpp.hpp>
 #include <mutex>
+#include <boost/asio/io_context.hpp>
 
 namespace wallet {
 namespace net {
@@ -38,12 +39,7 @@ class base_repository {
     httb::request newRequest() const {
         return httb::request(getBaseUrl());
     }
-
-    const std::shared_ptr<httb::client> &getClient() const {
-        return m_client;
-    }
  private:
-    std::shared_ptr<httb::client> m_client;
 };
 
 using on_progress = std::function<void()>;
@@ -67,17 +63,14 @@ inline task_ptr<T> make_task_ptr(_Args&&... __args) {
 template<typename T>
 class response_task : public std::enable_shared_from_this<response_task<T>> {
  public:
-    response_task(httb::request &&req) : m_request(std::move(req)) {
+    response_task(httb::request &&req) :
+        m_ctx(),
+        m_request(std::move(req))
+        {
     }
 
     std::shared_ptr<response_task<T>> execute() {
-
-        auto fut = std::async(std::launch::async, [this] {
-//          auto weak_it = std::weak_ptr<response_task<T>>(this->shared_from_this());
-//          std::shared_ptr<response_task<T>> ptr = weak_it.lock();
-
-          httb::client client;
-          auto resp = client.execute(m_request);
+        client.executeInContext(m_ctx, m_request, [this](httb::response resp) {
           nlohmann::json val = nlohmann::json::parse(resp.data);
           T res = val.get<T>();
 
@@ -94,11 +87,7 @@ class response_task : public std::enable_shared_from_this<response_task<T>> {
           if (m_on_complete) {
               m_on_complete();
           }
-
-          return res;
         });
-
-        m_handle = std::move(fut);
 
         if (m_on_progress) {
             m_on_progress();
@@ -107,22 +96,49 @@ class response_task : public std::enable_shared_from_this<response_task<T>> {
         return this->shared_from_this();
     }
 
-    std::shared_ptr<response_task<T>> progress(on_progress cb) {
+    std::shared_ptr<response_task<T>> execute(boost::asio::io_context &io_ctx) {
+        client.executeInContext(io_ctx, m_request, [this](httb::response resp) {
+          nlohmann::json val = nlohmann::json::parse(resp.data);
+          T res = val.get<T>();
+
+          if (resp.isSuccess()) {
+              if (m_on_success) {
+                  m_on_success(res);
+              }
+          } else {
+              if (m_on_error) {
+                  m_on_error(resp, res);
+              }
+          }
+
+          if (m_on_complete) {
+              m_on_complete();
+          }
+        });
+
+        if (m_on_progress) {
+            m_on_progress();
+        }
+
+        return this->shared_from_this();
+    }
+
+    std::shared_ptr<response_task<T>> progress(const on_progress &cb) {
         m_on_progress = cb;
         return this->shared_from_this();
     }
 
-    std::shared_ptr<response_task<T>> success(on_success<T> cb) {
+    std::shared_ptr<response_task<T>> success(const on_success<T> &cb) {
         m_on_success = cb;
         return this->shared_from_this();
     }
 
-    std::shared_ptr<response_task<T>> error(on_error<T> cb) {
+    std::shared_ptr<response_task<T>> error(const on_error<T> &cb) {
         m_on_error = cb;
         return this->shared_from_this();
     }
 
-    std::shared_ptr<response_task<T>> complete(on_complete cb) {
+    std::shared_ptr<response_task<T>> complete(const on_complete &cb) {
         m_on_complete = cb;
         return this->shared_from_this();
     }
@@ -131,16 +147,17 @@ class response_task : public std::enable_shared_from_this<response_task<T>> {
         return m_request;
     }
 
-    std::shared_future<T> handle() {
-        return m_handle.share();
+    boost::asio::io_context& handle() {
+        return m_ctx;
     }
  private:
+    httb::client client;
+    boost::asio::io_context m_ctx;
     httb::request m_request;
     on_progress m_on_progress;
     on_success<T> m_on_success;
     on_error<T> m_on_error;
     on_complete m_on_complete;
-    std::future<T> m_handle;
 };
 
 template<typename A, typename B>
@@ -152,11 +169,11 @@ class pair_task {
     }
 
     void execute() {
-        resp_a->execute();
-        resp_b->execute();
+        boost::asio::io_context ctx(2);
+        resp_a->execute(ctx);
+        resp_b->execute(ctx);
 
-        resp_a->handle().wait();
-        resp_b->handle().wait();
+        ctx.run();
     }
  private:
     task_ptr<A> resp_a;

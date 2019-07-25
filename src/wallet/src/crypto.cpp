@@ -20,7 +20,7 @@ std::string wallet::crypto::hash_argon2i(const std::string &data) {
         throw std::runtime_error("Out of memory");
     }
 
-    return mintex::utils::to_string(hashed);
+    return minter::utils::to_string(hashed);
 }
 
 bool wallet::crypto::verify_argon2i(const std::string &data, const std::string &hash) {
@@ -34,33 +34,33 @@ bool wallet::crypto::verify_argon2i(const std::string &data, const std::string &
     return true;
 }
 std::string wallet::crypto::encrypt_data(const minter::Data &key, const std::string &data) {
-    minter::Data key_inner = mintex::utils::sha3k(key.get());
+    minter::Data key_inner = minter::utils::sha3k(key.get());
     mlock_guard key_lock(key_inner);
 
     minter::Data output;
-    Aes256::encrypt(key_inner.get(), mintex::utils::to_bytes(data), output.get());
+    Aes256::encrypt(key_inner.get(), minter::utils::to_bytes(data), output.get());
     return output.toHex();
 }
 std::string wallet::crypto::decrypt_data(const minter::Data &key, const std::string &data) {
-    minter::Data key_inner = mintex::utils::sha3k(key.get());
+    minter::Data key_inner = minter::utils::sha3k(key.get());
     mlock_guard key_lock(key_inner);
     minter::Data input(data.c_str());
     minter::Data decrypted;
     Aes256::decrypt(key_inner.get(), input.get(), decrypted.get());
 
-    return mintex::utils::to_string_clear(decrypted.get());
+    return minter::utils::to_string_clear(decrypted.get());
 }
 std::string wallet::crypto::encrypt_data_string(const std::string &key, const std::string &data) {
-    minter::Data key_inner = mintex::utils::sha3k(minter::Data(mintex::utils::to_bytes(key)));
+    minter::Data key_inner = minter::utils::sha3k(minter::Data(minter::utils::to_bytes(key)));
     minter::Data output;
-    Aes256::encrypt(key_inner.get(), mintex::utils::to_bytes(data), output.get());
+    Aes256::encrypt(key_inner.get(), minter::utils::to_bytes(data), output.get());
     return output.toHex();
 }
 std::string wallet::crypto::decrypt_data_string(const std::string &key, const std::string &data) {
-    minter::Data key_inner = mintex::utils::sha3k(minter::Data(mintex::utils::to_bytes(key)));
+    minter::Data key_inner = minter::utils::sha3k(minter::Data(minter::utils::to_bytes(key)));
     minter::Data input(data.c_str());
     minter::Data decrypted;
     Aes256::decrypt(key_inner.get(), input.get(), decrypted.get());
 
-    return mintex::utils::to_string_clear(decrypted.get());
+    return minter::utils::to_string_clear(decrypted.get());
 }

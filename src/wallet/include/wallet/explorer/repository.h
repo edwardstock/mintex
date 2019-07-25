@@ -15,12 +15,13 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <memory>
+#include <minter/address.h>
 #include "wallet/base_repository.h"
 #include "wallet/explorer/results.hpp"
 
 using namespace wallet::net;
-using namespace mintex;
-using namespace mintex::utils;
+using namespace minter;
+using namespace minter::utils;
 
 namespace wallet {
 namespace explorer {
@@ -55,7 +56,7 @@ public:
         return std::make_shared<response_task<base_result<balance_items>>>(std::move(req));
     }
 
-    auto get_balance(const mintex::address_t &address) const {
+    auto get_balance(const minter::address_t &address) const {
         return get_balance(address.to_string());
     }
 

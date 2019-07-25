@@ -3,26 +3,26 @@
     "<string>",
     "<vector>",
     "<nlohmann/json.hpp>",
-    "<eth/Common.h>",
-    "wallet/explorer/base.h",
-    "mintex-tx/minter_hash.h",
-    "mintex-tx/minter_address.h",
-    "mintex-tx/minter_public_key.h",
-    "mintex-tx/tx_type.h"
+    "<minter/eth/Common.h>",
+    "<minter/hash.h>",
+    "<minter/address.h>",
+    "<minter/public_key.h>",
+    "<minter/tx/tx_type.h>",
+    "wallet/explorer/base.h"
   ],
   "responses": [
     {
       "name": "transaction_item",
       "fields": [
         ["dev::bigint", "txn"],
-        ["mintex::hash_t", "hash"],
+        ["minter::hash_t", "hash"],
         ["dev::bigint", "nonce"],
         ["dev::bigint", "block"],
         ["std::string", "timestamp"],
         ["dev::bigdec18", "fee"],
-        ["mintex::tx_type_val", "type"],
+        ["minter::tx_type_val", "type"],
         ["std::string", "payload"],
-        ["mintex::address_t", "from"],
+        ["minter::address_t", "from"],
         ["std::shared_ptr<wallet::explorer::tx_result>", "data", "data", true]
       ]
     },
@@ -30,7 +30,7 @@
       "name": "tx_send_result",
       "parent": "wallet::explorer::tx_result",
       "fields": [
-        ["mintex::address_t", "to"],
+        ["minter::address_t", "to"],
         ["std::string", "coin"],
         ["dev::bigdec18", "value"]
       ]
@@ -62,8 +62,8 @@
       "name": "tx_declare_candidacy_result",
       "parent": "wallet::explorer::tx_result",
       "fields": [
-        ["mintex::address_t", "address"],
-        ["mintex::pubkey_t", "pub_key"],
+        ["minter::address_t", "address"],
+        ["minter::pubkey_t", "pub_key"],
         ["uint32_t", "commission"],
         ["std::string", "coin"],
         ["dev::bigdec18", "stake"]
@@ -73,14 +73,14 @@
       "name": "tx_set_candidate_on_off_result",
       "parent": "wallet::explorer::tx_result",
       "fields": [
-        ["mintex::pubkey_t", "pub_key"]
+        ["minter::pubkey_t", "pub_key"]
       ]
     },
     {
       "name": "tx_delegate_unbond_result",
       "parent": "wallet::explorer::tx_result",
       "fields": [
-        ["mintex::pubkey_t", "pub_key"],
+        ["minter::pubkey_t", "pub_key"],
         ["std::string", "coin"],
         ["dev::bigdec18", "stake"],
         ["dev::bigdec18", "value"]
@@ -92,7 +92,7 @@
         ["std::string", "coin"],
         ["dev::bigint", "nonce"],
         ["dev::bigdec18", "value"],
-        ["mintex::address_t", "sender"],
+        ["minter::address_t", "sender"],
         ["dev::bigint", "due_block"]
       ]
     },
@@ -113,7 +113,7 @@
       "fields": [
         ["dev::bigint", "threshold"],
         ["std::vector<dev::bigint>", "weights"],
-        ["std::vector<mintex::address_t>", "addresses"]
+        ["std::vector<minter::address_t>", "addresses"]
       ]
     },
     {
@@ -127,9 +127,9 @@
       "name": "tx_edit_candidate_result",
       "parent": "wallet::explorer::tx_result",
       "fields": [
-        ["mintex::address_t", "reward_address"],
-        ["mintex::address_t", "owner_address"],
-        ["mintex::pubkey_t", "pub_key"]
+        ["minter::address_t", "reward_address"],
+        ["minter::address_t", "owner_address"],
+        ["minter::pubkey_t", "pub_key"]
       ]
     },
     {
@@ -142,7 +142,7 @@
     {
       "name": "balance_items",
       "fields": [
-        ["mintex::address_t", "address"],
+        ["minter::address_t", "address"],
         ["std::vector<balance_item>", "balances"]
       ]
     },
@@ -150,7 +150,7 @@
       "name": "delegated_item",
       "parent": "wallet::explorer::tx_result",
       "fields": [
-        ["mintex::pubkey_t", "pub_key"],
+        ["minter::pubkey_t", "pub_key"],
         ["std::string", "coin"],
         ["dev::bigdec18", "value"]
       ]
@@ -161,8 +161,8 @@
         ["uint64_t", "block"],
         ["std::string", "role"],
         ["dev::bigdec18", "amount"],
-        ["mintex::address_t", "address"],
-        ["mintex::pubkey_t", "validator"],
+        ["minter::address_t", "address"],
+        ["minter::pubkey_t", "validator"],
         ["std::string", "timestamp"]
       ]
     }

@@ -13,6 +13,7 @@
 #include <boost/program_options.hpp>
 #include <rang.hpp>
 #include <fmt/format.h>
+#include <fmt/printf.h>
 #include <toolboxpp.hpp>
 #include "wallet/data/secret_storage.h"
 #include "wallet/settings.h"
@@ -196,7 +197,12 @@ class command_controller {
             return;
         }
 
-        func_map[action](vm);
+        try {
+            func_map[action](vm);
+        } catch(const std::exception &e) {
+            fmt::fprintf(std::cerr, "Command error:\n%s\n", e.what());
+        }
+
     }
 
     const std::unordered_map<std::string, action_func_t> &get_func_map() {

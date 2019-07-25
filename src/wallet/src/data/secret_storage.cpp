@@ -7,7 +7,7 @@
  * \link   https://github.com/edwardstock
  */
 
-#include <bip39/utils.h>
+#include <minter/bip39/utils.h>
 #include "wallet/settings.h"
 #include "wallet/resp_gen.h"
 #include "wallet/crypto.h"
@@ -17,7 +17,7 @@
 
 void wallet::from_json(const nlohmann::json &j, wallet::secret_data &data) {
     JSON_GET(j, "mnemonic", std::string, data.mnemonic);
-    JSON_GET(j, "priv_key", mintex::privkey_t, data.priv_key);
+    JSON_GET(j, "priv_key", minter::privkey_t, data.priv_key);
     JSON_GET(j, "derive_index", uint32_t, data.derive_index);
 }
 
@@ -51,7 +51,7 @@ void wallet::secret_storage::init() {
 }
 void wallet::secret_storage::init(const std::string &pass) {
 
-    m_passkey = minter::Data(mintex::utils::to_bytes(pass));
+    m_passkey = minter::Data(minter::utils::to_bytes(pass));
     m_pass_mlock = wallet::crypto::mlock_guard(m_passkey);
 
     m_storage.add_keybased_interceptor(KEY_SECRETS, {
@@ -69,7 +69,7 @@ wallet::secret_data wallet::secret_storage::generate(uint32_t derive_index) {
     secret_data data;
     auto mnemonic = minter::Bip39Mnemonic::generate();
     data.mnemonic = mnemonic.raw;
-    data.priv_key = mintex::privkey_t::from_mnemonic(data.mnemonic.c_str(), derive_index);
+    data.priv_key = minter::privkey_t::from_mnemonic(data.mnemonic.c_str(), derive_index);
     data.derive_index = derive_index;
 
     return data;
@@ -87,7 +87,7 @@ void wallet::secret_storage::add(const wallet::secret_data &data) {
     for (const auto &item: secrets) {
         if (item.priv_key == data.priv_key) {
             throw std::runtime_error(fmt::format("This private {0} already exists",
-                                                 mintex::address_t(data.priv_key).to_string()));
+                                                 minter::address_t(data.priv_key).to_string()));
         }
     }
 
@@ -199,19 +199,19 @@ wallet::secret_data wallet::secret_storage::get_secret(size_t index) const {
     return secrets[index];
 }
 
-std::vector<mintex::address_t> wallet::secret_storage::get_addresses() const {
+std::vector<minter::address_t> wallet::secret_storage::get_addresses() const {
     leveldb::Status status;
     std::string res = m_storage.get(KEY_ADDRESSES, &status);
-    std::vector<mintex::address_t> data;
+    std::vector<minter::address_t> data;
     if (status.ok() && !res.empty()) {
         auto j = nlohmann::json::parse(res);
-        j.get_to<std::vector<mintex::address_t>>(data);
+        j.get_to<std::vector<minter::address_t>>(data);
     }
 
     return data;
 }
 
-mintex::address_t wallet::secret_storage::get_address(size_t index) const {
+minter::address_t wallet::secret_storage::get_address(size_t index) const {
     auto addresses = get_addresses();
     if (index < 0 || index > (addresses.size() - 1)) {
         throw wallet::out_of_bound_error("Invalid account index");

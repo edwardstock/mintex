@@ -19,9 +19,9 @@
 #include <sstream>
 #include <rang.hpp>
 #include <toolboxpp.hpp>
-#include "mintex-tx/minter_address.h"
-#include "mintex-tx/minter_hash.h"
-#include "mintex-tx/minter_public_key.h"
+#include <minter/address.h>
+#include <minter/hash.h>
+#include <minter/public_key.h>
 
 namespace wallet {
 namespace term {

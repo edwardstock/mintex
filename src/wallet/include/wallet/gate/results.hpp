@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <eth/Common.h>
+#include <minter/eth/Common.h>
+#include <minter/hash.h>
+#include <minter/address.h>
+#include <minter/public_key.h>
+#include <minter/tx/tx_type.h>
 #include "wallet/gate/base.h"
-#include "mintex-tx/minter_hash.h"
-#include "mintex-tx/minter_address.h"
-#include "mintex-tx/minter_public_key.h"
-#include "mintex-tx/tx_type.h"
 
 
 
@@ -36,7 +36,7 @@ struct tx_count_value {
 	dev::bigint count;
 };
 struct tx_send_result {
-	mintex::hash_t hash;
+	minter::hash_t hash;
 };
 inline void from_json(const nlohmann::json& j, ::wallet::gate::gas_value& resp) {
 	if(j.find("gas") != j.end() && !j.at("gas").is_null()) j.at("gas").get_to<dev::bigint>(resp.gas);
@@ -83,7 +83,7 @@ inline void to_json(nlohmann::json& j, const ::wallet::gate::tx_count_value& res
 	};
 }
 inline void from_json(const nlohmann::json& j, ::wallet::gate::tx_send_result& resp) {
-	if(j.find("hash") != j.end() && !j.at("hash").is_null()) j.at("hash").get_to<mintex::hash_t>(resp.hash);
+	if(j.find("hash") != j.end() && !j.at("hash").is_null()) j.at("hash").get_to<minter::hash_t>(resp.hash);
 }
 inline void to_json(nlohmann::json& j, const ::wallet::gate::tx_send_result& resp) {
 	j = nlohmann::json{

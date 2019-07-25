@@ -14,32 +14,32 @@
 #include <unordered_map>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <eth/Common.h>
+#include <minter/eth/Common.h>
 #include "wallet/resp_gen.h"
-#include "mintex-tx/minter_address.h"
-#include "mintex-tx/minter_public_key.h"
-#include "mintex-tx/minter_hash.h"
-#include "mintex-tx/tx_type.h"
+#include <minter/address.h>
+#include <minter/public_key.h>
+#include <minter/hash.h>
+#include <minter/tx/tx_type.h>
 
 namespace wallet {
 namespace explorer {
 
 using field_map = std::unordered_map<std::string, std::string>;
 
-NLOHMANN_JSON_SERIALIZE_ENUM(mintex::tx_type_val, {
-    { mintex::tx_type_val::send_coin, mintex::tx_type_val::send_coin },
-    { mintex::tx_type_val::sell_coin, mintex::tx_type_val::sell_coin },
-    { mintex::tx_type_val::buy_coin, mintex::tx_type_val::buy_coin },
-    { mintex::tx_type_val::create_coin, mintex::tx_type_val::create_coin },
-    { mintex::tx_type_val::declare_candidacy, mintex::tx_type_val::declare_candidacy },
-    { mintex::tx_type_val::delegate, mintex::tx_type_val::delegate },
-    { mintex::tx_type_val::unbond, mintex::tx_type_val::unbond },
-    { mintex::tx_type_val::redeem_check, mintex::tx_type_val::redeem_check },
-    { mintex::tx_type_val::set_candidate_on, mintex::tx_type_val::set_candidate_on },
-    { mintex::tx_type_val::set_candidate_off, mintex::tx_type_val::set_candidate_off },
-    { mintex::tx_type_val::create_multisig, mintex::tx_type_val::create_multisig },
-    { mintex::tx_type_val::multisend, mintex::tx_type_val::multisend },
-    { mintex::tx_type_val::edit_candidate, mintex::tx_type_val::edit_candidate },
+NLOHMANN_JSON_SERIALIZE_ENUM(minter::tx_type_val, {
+    { minter::tx_type_val::send_coin, minter::tx_type_val::send_coin },
+    { minter::tx_type_val::sell_coin, minter::tx_type_val::sell_coin },
+    { minter::tx_type_val::buy_coin, minter::tx_type_val::buy_coin },
+    { minter::tx_type_val::create_coin, minter::tx_type_val::create_coin },
+    { minter::tx_type_val::declare_candidacy, minter::tx_type_val::declare_candidacy },
+    { minter::tx_type_val::delegate, minter::tx_type_val::delegate },
+    { minter::tx_type_val::unbond, minter::tx_type_val::unbond },
+    { minter::tx_type_val::redeem_check, minter::tx_type_val::redeem_check },
+    { minter::tx_type_val::set_candidate_on, minter::tx_type_val::set_candidate_on },
+    { minter::tx_type_val::set_candidate_off, minter::tx_type_val::set_candidate_off },
+    { minter::tx_type_val::create_multisig, minter::tx_type_val::create_multisig },
+    { minter::tx_type_val::multisend, minter::tx_type_val::multisend },
+    { minter::tx_type_val::edit_candidate, minter::tx_type_val::edit_candidate },
 })
 
 CREATE_RESP3(error_result,
